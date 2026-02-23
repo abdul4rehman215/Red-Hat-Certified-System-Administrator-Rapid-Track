@@ -41,12 +41,6 @@ lab34-troubleshooting-network-connectivity/
 ├── troubleshooting.md
 
 ````
-
-✅ Notes:
-
-* This lab is primarily command-line based, so **no custom scripts** were required.
-* If you later want, we can add a `notes/network-checklist.md` as a personal cheat sheet (optional).
-
 ---
 
 ## ✅ Tasks Overview
