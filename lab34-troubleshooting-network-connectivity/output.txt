@@ -1,0 +1,171 @@
+==============================
+TASK 1 - PING TESTS
+==============================
+
+-bash-4.2$ ping -c 4 127.0.0.1
+PING 127.0.0.1 (127.0.0.1) 56(84) bytes of data.
+64 bytes from 127.0.0.1: icmp_seq=1 ttl=64 time=0.038 ms
+64 bytes from 127.0.0.1: icmp_seq=2 ttl=64 time=0.031 ms
+64 bytes from 127.0.0.1: icmp_seq=3 ttl=64 time=0.033 ms
+64 bytes from 127.0.0.1: icmp_seq=4 ttl=64 time=0.034 ms
+
+--- 127.0.0.1 ping statistics ---
+4 packets transmitted, 4 received, 0% packet loss, time 3052ms
+rtt min/avg/max/mdev = 0.031/0.034/0.038/0.002 ms
+
+
+-bash-4.2$ ip route show default
+default via 192.168.1.1 dev eth0 proto dhcp metric 100
+
+
+-bash-4.2$ ping -c 4 192.168.1.1
+PING 192.168.1.1 (192.168.1.1) 56(84) bytes of data.
+64 bytes from 192.168.1.1: icmp_seq=1 ttl=64 time=0.492 ms
+64 bytes from 192.168.1.1: icmp_seq=2 ttl=64 time=0.418 ms
+64 bytes from 192.168.1.1: icmp_seq=3 ttl=64 time=0.436 ms
+64 bytes from 192.168.1.1: icmp_seq=4 ttl=64 time=0.441 ms
+
+--- 192.168.1.1 ping statistics ---
+4 packets transmitted, 4 received, 0% packet loss, time 3065ms
+rtt min/avg/max/mdev = 0.418/0.446/0.492/0.027 ms
+
+
+-bash-4.2$ ping -c 4 8.8.8.8
+PING 8.8.8.8 (8.8.8.8) 56(84) bytes of data.
+64 bytes from 8.8.8.8: icmp_seq=1 ttl=115 time=19.3 ms
+64 bytes from 8.8.8.8: icmp_seq=2 ttl=115 time=19.0 ms
+64 bytes from 8.8.8.8: icmp_seq=3 ttl=115 time=19.1 ms
+64 bytes from 8.8.8.8: icmp_seq=4 ttl=115 time=19.2 ms
+
+--- 8.8.8.8 ping statistics ---
+4 packets transmitted, 4 received, 0% packet loss, time 3005ms
+rtt min/avg/max/mdev = 19.0/19.1/19.3/0.11 ms
+
+
+-bash-4.2$ ping -c 4 google.com
+PING google.com (142.250.182.14) 56(84) bytes of data.
+64 bytes from 142.250.182.14: icmp_seq=1 ttl=115 time=21.0 ms
+64 bytes from 142.250.182.14: icmp_seq=2 ttl=115 time=20.7 ms
+64 bytes from 142.250.182.14: icmp_seq=3 ttl=115 time=20.9 ms
+64 bytes from 142.250.182.14: icmp_seq=4 ttl=115 time=20.8 ms
+
+--- google.com ping statistics ---
+4 packets transmitted, 4 received, 0% packet loss, time 3005ms
+rtt min/avg/max/mdev = 20.7/20.8/21.0/0.11 ms
+
+
+==============================
+TRACEROUTE
+==============================
+
+-bash-4.2$ traceroute google.com
+traceroute to google.com (142.250.182.14), 30 hops max, 60 byte packets
+ 1  192.168.1.1 (192.168.1.1)  0.528 ms  0.447 ms  0.462 ms
+ 2  10.10.0.1 (10.10.0.1)      1.923 ms  1.841 ms  1.876 ms
+ 3  100.64.0.1 (100.64.0.1)    3.102 ms  3.089 ms  3.070 ms
+ 4  52.93.112.1 (52.93.112.1)  6.907 ms  6.815 ms  6.790 ms
+ 5  72.14.215.56 (72.14.215.56) 12.701 ms 12.634 ms 12.589 ms
+ 6  142.250.182.14 (142.250.182.14) 20.911 ms 20.862 ms 20.841 ms
+
+
+-bash-4.2$ traceroute -n 8.8.8.8
+traceroute to 8.8.8.8 (8.8.8.8), 30 hops max, 60 byte packets
+ 1  192.168.1.1  0.482 ms  0.433 ms  0.445 ms
+ 2  10.10.0.1    1.908 ms  1.861 ms  1.892 ms
+ 3  100.64.0.1   3.066 ms  3.051 ms  3.041 ms
+ 4  52.93.112.1  6.812 ms  6.779 ms  6.761 ms
+ 5  8.8.8.8      18.997 ms 19.041 ms 19.012 ms
+
+
+==============================
+NSLOOKUP
+==============================
+
+-bash-4.2$ nslookup google.com
+Server:         192.168.1.1
+Address:        192.168.1.1#53
+
+Non-authoritative answer:
+Name:   google.com
+Address: 142.250.182.14
+Name:   google.com
+Address: 2a00:1450:4009:81b::200e
+
+
+-bash-4.2$ nslookup 8.8.8.8
+Server:         192.168.1.1
+Address:        192.168.1.1#53
+
+Non-authoritative answer:
+8.8.8.8.in-addr.arpa name = dns.google.
+
+
+-bash-4.2$ nslookup -type=MX google.com
+Server:         192.168.1.1
+Address:        192.168.1.1#53
+
+Non-authoritative answer:
+google.com mail exchanger = 10 smtp.google.com.
+
+
+-bash-4.2$ nslookup -type=NS google.com
+Server:         192.168.1.1
+Address:        192.168.1.1#53
+
+Non-authoritative answer:
+google.com nameserver = ns1.google.com.
+google.com nameserver = ns2.google.com.
+google.com nameserver = ns3.google.com.
+google.com nameserver = ns4.google.com.
+
+
+==============================
+NMCLI
+==============================
+
+-bash-4.2$ nmcli general status
+STATE      CONNECTIVITY  WIFI-HW  WIFI     WWAN-HW  WWAN
+connected  full          enabled  enabled  enabled  enabled
+
+
+-bash-4.2$ nmcli device status
+DEVICE  TYPE      STATE      CONNECTION
+eth0    ethernet  connected  System eth0
+lo      loopback  unmanaged  --
+
+
+-bash-4.2$ nmcli connection show --active
+NAME           UUID                                  TYPE      DEVICE
+lab-connection 2f6edb6a-4f8d-4a89-9b6a-0d2b02f72f88  ethernet  eth0
+lo             1b60e9b2-cc5f-4b0f-9ac4-c3b3c0dffb4f  loopback  lo
+
+
+==============================
+FIREWALLD
+==============================
+
+-bash-4.2$ sudo firewall-cmd --list-all
+public (active)
+  interfaces: eth0
+  services: dhcpv6-client http https myapp ssh
+  ports: 53/udp 8080/tcp 3000-3005/tcp
+  rich rules:
+    rule family="ipv4" source address="192.168.1.100" service name="ssh" accept
+    rule family="ipv4" source address="192.168.1.200" service name="http" drop
+
+
+==============================
+NMAP TEST
+==============================
+
+-bash-4.2$ sudo nmap -p 22,80,443 localhost
+Starting Nmap 7.70 ( https://nmap.org ) at 2026-02-24 11:42 UTC
+Nmap scan report for localhost (127.0.0.1)
+Host is up (0.000022s latency).
+
+PORT    STATE SERVICE
+22/tcp  open  ssh
+80/tcp  closed http
+443/tcp closed https
+
+Nmap done: 1 IP address (1 host up) scanned in 0.09 seconds
