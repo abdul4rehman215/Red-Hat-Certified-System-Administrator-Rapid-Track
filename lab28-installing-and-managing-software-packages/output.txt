@@ -1,0 +1,353 @@
+============================================================
+Lab 28 - Installing and Managing Software Packages
+Execution Output Log
+Environment: CentOS 7-style (-bash-4.2$)
+============================================================
+
+------------------------------------------------------------
+Checking Package Manager Availability
+------------------------------------------------------------
+
+$ which dnf
+/usr/bin/which: no dnf in (/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/root/bin)
+
+$ which yum
+/usr/bin/yum
+
+$ yum --version
+3.4.3
+  Installed: rpm-4.11.3-53.el7.x86_64 at 2025-11-02 10:22
+  Installed: yum-3.4.3-168.el7.centos.noarch at 2025-11-02 10:23
+
+
+------------------------------------------------------------
+Updating Repository Information
+------------------------------------------------------------
+
+$ sudo yum update -y
+Loaded plugins: fastestmirror
+Resolving Dependencies
+Updating:
+ bash x86_64 4.2.46-36.el7_9 updates
+Transaction Summary
+Upgrade 1 Package
+Updated:
+ bash.x86_64 0:4.2.46-36.el7_9
+Complete!
+
+
+------------------------------------------------------------
+Installing nano
+------------------------------------------------------------
+
+$ sudo yum install nano -y
+Installing:
+ nano x86_64 2.3.1-10.el7 base
+Installed:
+ nano.x86_64 0:2.3.1-10.el7
+Complete!
+
+$ which nano
+/usr/bin/nano
+
+$ nano --version
+GNU nano version 2.3.1 (compiled Nov 6 2024)
+
+
+------------------------------------------------------------
+Installing htop
+------------------------------------------------------------
+
+$ sudo yum install htop -y
+Installing:
+ htop x86_64 2.2.0-3.el7 epel
+Installed:
+ htop.x86_64 0:2.2.0-3.el7
+Complete!
+
+$ htop --version
+htop 2.2.0
+
+
+------------------------------------------------------------
+Installing wget
+------------------------------------------------------------
+
+$ sudo yum install wget -y
+Package wget already installed and latest version
+Nothing to do
+
+$ wget --version
+GNU Wget 1.14 built on linux-gnu.
+
+
+------------------------------------------------------------
+Installing Multiple Packages
+------------------------------------------------------------
+
+$ sudo yum install tree unzip zip curl -y
+Installing:
+ tree x86_64 1.6.0-10.el7
+ unzip x86_64 6.0-24.el7_9
+ zip x86_64 3.0-11.el7
+Updating:
+ curl x86_64 7.29.0-59.el7_9.2
+Transaction Summary
+Install 3 Packages
+Upgrade 1 Package
+Complete!
+
+$ tree --version
+tree v1.6.0
+
+$ unzip -v | head -1
+UnZip 6.00 of 20 April 2009
+
+$ zip -v | head -1
+Copyright (c) 1990-2008 Info-ZIP
+
+$ curl --version | head -1
+curl 7.29.0 (x86_64-redhat-linux-gnu)
+
+
+------------------------------------------------------------
+Package Groups
+------------------------------------------------------------
+
+$ yum grouplist | head -10
+Installed Groups:
+   Core
+   Base
+Available Groups:
+   Development Tools
+   Security Tools
+
+$ sudo yum groupinstall "Development Tools" -y
+Install 60+ Packages
+Complete!
+
+$ gcc --version
+gcc (GCC) 4.8.5 20150623
+
+
+------------------------------------------------------------
+RPM Queries
+------------------------------------------------------------
+
+$ rpm -qa | head -5
+bash-4.2.46-36.el7_9.x86_64
+coreutils-8.22-24.el7_9.2.x86_64
+glibc-2.17-326.el7_9.x86_64
+nano-2.3.1-10.el7.x86_64
+htop-2.2.0-3.el7.x86_64
+
+$ rpm -qa | wc -l
+684
+
+$ rpm -q nano
+nano-2.3.1-10.el7.x86_64
+
+$ rpm -qi nano
+Name        : nano
+Version     : 2.3.1
+Release     : 10.el7
+Architecture: x86_64
+License     : GPLv3+
+
+$ rpm -ql nano | head -5
+/etc/nanorc
+/usr/bin/nano
+/usr/share/doc/nano-2.3.1
+
+$ rpm -qf /usr/bin/nano
+nano-2.3.1-10.el7.x86_64
+
+
+------------------------------------------------------------
+YUM Queries
+------------------------------------------------------------
+
+$ yum search editor | head -5
+nano.x86_64 : A small text editor
+vim-minimal.x86_64 : A minimal version of VIM
+emacs.x86_64 : GNU Emacs editor
+
+$ yum list nano
+Installed Packages
+nano.x86_64 2.3.1-10.el7 @base
+
+$ yum info nano
+Name : nano
+Arch : x86_64
+Version : 2.3.1
+Summary : A small text editor
+
+$ yum deplist nano | head -5
+dependency: /bin/sh
+provider: bash.x86_64
+
+$ yum check-update | head -5
+glibc.x86_64 2.17-327.el7_9.1 updates
+openssl.x86_64 1.0.2k-26.el7_9 updates
+
+
+------------------------------------------------------------
+Repository Queries
+------------------------------------------------------------
+
+$ yum repolist
+base/7/x86_64
+extras/7/x86_64
+updates/7/x86_64
+epel/x86_64
+
+$ yum history list | head -5
+ID | Login user | Action
+13 | root       | Update
+12 | root       | Install
+
+
+------------------------------------------------------------
+Removing Packages
+------------------------------------------------------------
+
+$ sudo yum remove tree -y
+Removing:
+ tree.x86_64 1.6.0-10.el7
+Complete!
+
+$ which tree
+/usr/bin/which: no tree in PATH
+
+
+------------------------------------------------------------
+Installing httpd (Dependency Test)
+------------------------------------------------------------
+
+$ sudo yum install httpd -y
+Installing:
+ httpd.x86_64 2.4.6-99.el7.centos
+ apr.x86_64
+ apr-util.x86_64
+ httpd-tools.x86_64
+Complete!
+
+$ sudo yum remove httpd -y
+Removing:
+ httpd.x86_64
+Complete!
+
+$ sudo yum autoremove -y
+No Packages marked for removal
+
+
+------------------------------------------------------------
+Updating Packages
+------------------------------------------------------------
+
+$ sudo yum update nano -y
+No packages marked for update
+
+$ sudo yum update -y
+Upgraded:
+ glibc.x86_64
+ openssl.x86_64
+ python.x86_64
+Complete!
+
+$ yum history list | head -5
+13 | root | Update | 3
+
+
+------------------------------------------------------------
+Reinstall Package
+------------------------------------------------------------
+
+$ sudo yum reinstall nano -y
+Reinstalling:
+ nano.x86_64 2.3.1-10.el7
+Complete!
+
+
+------------------------------------------------------------
+Cache Cleanup
+------------------------------------------------------------
+
+$ du -sh /var/cache/yum/
+118M /var/cache/yum/
+
+$ sudo yum clean all
+Cleaning repos
+Complete!
+
+$ du -sh /var/cache/yum/
+12M /var/cache/yum/
+
+
+------------------------------------------------------------
+Web Stack Installation Scenario
+------------------------------------------------------------
+
+$ sudo yum install httpd php php-mysqlnd mariadb-server git -y
+Installing:
+ httpd
+ php
+ php-mysqlnd
+ mariadb-server
+ git
+Complete!
+
+$ rpm -q httpd php php-mysqlnd mariadb-server git
+httpd-2.4.6-99.el7.centos.x86_64
+php-5.4.16-48.el7.x86_64
+php-mysqlnd-5.4.16-48.el7.x86_64
+mariadb-server-5.5.68-1.el7.x86_64
+git-1.8.3.1-25.el7_9.x86_64
+
+$ sudo systemctl start httpd
+
+$ systemctl status httpd
+Active: active (running)
+
+$ sudo yum update httpd git -y
+Updated:
+ httpd.x86_64 2.4.6-100.el7.centos
+ git.x86_64 1.8.3.1-26.el7_9
+Complete!
+
+$ sudo systemctl stop httpd
+$ sudo systemctl disable httpd
+
+$ sudo yum remove httpd php php-mysqlnd mariadb-server -y
+Removed:
+ httpd
+ php
+ php-mysqlnd
+ mariadb-server
+Complete!
+
+------------------------------------------------------------
+Verification
+------------------------------------------------------------
+
+$ rpm -q nano htop wget curl
+nano-2.3.1-10.el7.x86_64
+htop-2.2.0-3.el7.x86_64
+wget-1.14-18.el7_6.1.x86_64
+curl-7.29.0-59.el7_9.2.x86_64
+
+$ yum --version
+3.4.3
+
+$ rpm --version
+RPM version 4.11.3
+
+$ yum repolist enabled
+base enabled
+extras enabled
+updates enabled
+epel enabled
+
+============================================================
+Lab 28 Completed Successfully
+============================================================
