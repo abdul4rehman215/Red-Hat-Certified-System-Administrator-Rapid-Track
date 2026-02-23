@@ -30,7 +30,7 @@ Before performing this lab, the following knowledge was required:
 ## 🧰 Lab Environment
 | Item | Value |
 |------|------|
-| Platform | Cloud Lab Environment (Al Nafi) |
+| Platform | Cloud Lab Environment |
 | OS | CentOS/RHEL 8/9 |
 | User | `centos` |
 | Scheduler Tools | `crond`, `systemd` |
