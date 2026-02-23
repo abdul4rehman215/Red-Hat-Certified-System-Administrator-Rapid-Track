@@ -1,0 +1,148 @@
+==============================================
+Lab 08: Managing Password Policies
+==============================================
+
+----------------------------------------------
+Lab Setup: Create Test Users
+----------------------------------------------
+
+-bash-4.2$ sudo useradd testuser1
+[sudo] password for student:
+(No output)
+
+-bash-4.2$ sudo useradd testuser2
+(No output)
+
+----------------------------------------------
+Task 1: Install Required Package
+----------------------------------------------
+
+-bash-4.2$ sudo dnf install libpwquality -y
+Last metadata expiration check: 0:02:01 ago.
+Dependencies resolved.
+Installing:
+ libpwquality  x86_64  1.4.4-8.el9
+
+Transaction Summary
+Install  1 Package
+
+Installed:
+  libpwquality-1.4.4-8.el9.x86_64
+
+Complete!
+
+----------------------------------------------
+Verify Password Quality
+----------------------------------------------
+
+-bash-4.2$ echo "Weakpass1" | sudo pwscore
+30
+
+-bash-4.2$ echo "StrongPass123!" | sudo pwscore
+92
+
+----------------------------------------------
+Task 2: Apply Password Aging Policy
+----------------------------------------------
+
+-bash-4.2$ sudo chage -M 90 -m 7 -W 14 testuser1
+(No output)
+
+-bash-4.2$ sudo chage -M 90 -m 7 -W 14 testuser2
+(No output)
+
+-bash-4.2$ sudo chage -l testuser1
+Last password change                                    : never
+Password expires                                        : 90 days after password set
+Password inactive                                       : never
+Account expires                                         : never
+Minimum number of days between password change          : 7
+Maximum number of days between password change          : 90
+Number of days of warning before password expires       : 14
+
+----------------------------------------------
+Configure Default Inactivity Lock
+----------------------------------------------
+
+-bash-4.2$ sudo useradd -D -f 30
+(No output)
+
+----------------------------------------------
+Task 3: Test Password Complexity Enforcement
+----------------------------------------------
+
+-bash-4.2$ sudo passwd testuser1
+New password:
+BAD PASSWORD: The password is shorter than 12 characters
+Retype new password:
+passwd: Authentication token manipulation error
+
+----------------------------------------------
+Set Strong Password
+----------------------------------------------
+
+-bash-4.2$ sudo passwd testuser1
+New password:
+Retype new password:
+passwd: password updated successfully
+
+----------------------------------------------
+Verify Password Aging
+----------------------------------------------
+
+-bash-4.2$ sudo chage -l testuser1
+Last password change                                    : Feb 23, 2026
+Password expires                                        : May 24, 2026
+Password inactive                                       : never
+Account expires                                         : never
+Minimum number of days between password change          : 7
+Maximum number of days between password change          : 90
+Number of days of warning before password expires       : 14
+
+----------------------------------------------
+Force Password Change on Next Login
+----------------------------------------------
+
+-bash-4.2$ sudo chage -d 0 testuser1
+(No output)
+
+----------------------------------------------
+Configure Account Expiration & Inactivity
+----------------------------------------------
+
+-bash-4.2$ sudo chage -I 30 -E $(date -d "+30 days" +%Y-%m-%d) testuser2
+(No output)
+
+-bash-4.2$ sudo chage -l testuser2
+Last password change                                    : never
+Password expires                                        : 90 days after password set
+Password inactive                                       : 30
+Account expires                                         : Mar 25, 2026
+Minimum number of days between password change          : 7
+Maximum number of days between password change          : 90
+Number of days of warning before password expires       : 14
+
+----------------------------------------------
+Troubleshooting Verification
+----------------------------------------------
+
+-bash-4.2$ grep pam_pwquality /etc/pam.d/system-auth
+password    requisite     pam_pwquality.so try_first_pass local_users_only
+
+-bash-4.2$ sudo tail /var/log/secure
+Feb 23 14:45:12 rhel9-sec-lab passwd[2312]: password for testuser1 changed by student
+Feb 23 14:46:02 rhel9-sec-lab passwd[2345]: BAD PASSWORD: The password is shorter than 12 characters
+
+----------------------------------------------
+Cleanup
+----------------------------------------------
+
+-bash-4.2$ sudo userdel -r testuser1
+userdel: testuser1 mail spool (/var/mail/testuser1) not found
+
+-bash-4.2$ sudo userdel -r testuser2
+userdel: testuser2 mail spool (/var/mail/testuser2) not found
+
+----------------------------------------------
+Lab 08 Completed Successfully
+----------------------------------------------
