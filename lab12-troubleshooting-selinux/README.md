@@ -2,14 +2,16 @@
 
 ---
 
-## 📌 Repository Structure
+# ⚙️ Lab Overview
 
-lab12-troubleshooting-selinux/
-├── README.md
-├── commands.sh
-├── output.txt
-├── interview_qna.md
-└── troubleshooting.md
+This lab simulates a real-world SELinux denial scenario where:
+
+- A web server (httpd) attempts to access a file
+- The file has an incorrect SELinux context
+- SELinux blocks the action
+- We identify the denial
+- Generate a policy module
+- Apply and verify the fix
 
 ---
 
@@ -35,23 +37,20 @@ By the end of this lab, I was able to:
 | SELinux Mode | Enforcing |
 | Policy Type | targeted |
 
-Prompt:
-
--bash-4.2$
-
 ---
 
-# ⚙️ Lab Overview
+## 📌 Repository Structure
 
-This lab simulates a real-world SELinux denial scenario where:
+```
 
-- A web server (httpd) attempts to access a file
-- The file has an incorrect SELinux context
-- SELinux blocks the action
-- We identify the denial
-- Generate a policy module
-- Apply and verify the fix
+lab12-troubleshooting-selinux/
+├── README.md
+├── commands.sh
+├── output.txt
+├── interview_qna.md
+└── troubleshooting.md
 
+```
 ---
 
 # 🧩 Tasks Performed
