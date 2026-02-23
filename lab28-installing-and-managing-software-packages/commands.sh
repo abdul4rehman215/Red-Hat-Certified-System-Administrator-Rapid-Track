@@ -1,6 +1,6 @@
 #!/bin/bash
 # ==========================================
-# Lab 08: Installing and Managing Software Packages
+# Lab 28: Installing and Managing Software Packages
 # Commands Executed (Sequential / No Explanations)
 # Environment: CentOS 7-style (yum primary)
 # ==========================================
