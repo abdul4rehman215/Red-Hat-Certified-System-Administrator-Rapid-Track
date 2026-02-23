@@ -1,0 +1,22 @@
+NAME        MAJ:MIN RM SIZE RO TYPE MOUNTPOINT
+nvme0n1     259:0    0  32G  0 disk
+└─nvme0n1p1 259:1    0  32G  0 part /
+sdb         8:16     0  20G  0 disk
+
+Created a new partition 1 of type 'Linux' and of size 5 GiB.
+
+sdb1        8:17     0   5G  0 part
+
+Creating filesystem with 1310720 4k blocks
+Filesystem UUID: 7d5a3e6a-3b2e-4d9c-9d11-8c9a7f2c7a12
+
+/dev/sdb1: UUID="7d5a3e6a-3b2e-4d9c-9d11-8c9a7f2c7a12" TYPE="ext4"
+
+Filesystem     Type  Size  Used Avail Use% Mounted on
+/dev/sdb1      ext4  4.9G   24M  4.6G   1% /mnt/mydata
+
+Setting up swapspace version 1, size = 2 GiB
+UUID=2e4d5b9e-8a67-4bcd-9c21-7e5a0f2e7d11
+
+NAME       TYPE SIZE USED PRIO
+/dev/sdb2  partition 2G   0B   -2
