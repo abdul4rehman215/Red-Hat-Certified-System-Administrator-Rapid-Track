@@ -1,6 +1,6 @@
 #!/bin/bash
 # ==========================================================
-# Lab 09: Partitioning and Formatting Disks
+# Lab 29: Partitioning and Formatting Disks
 # Commands Executed (Sequential / No Explanations)
 # Environment: CentOS/RHEL (-bash-4.2$)
 # Disks used: /dev/sdb (MBR via fdisk), /dev/sdc (GPT via parted)
