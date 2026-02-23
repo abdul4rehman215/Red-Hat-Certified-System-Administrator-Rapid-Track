@@ -1,0 +1,136 @@
+-bash-4.2$ nmcli connection show
+NAME                UUID                                  TYPE      DEVICE
+System eth0         7f33b8a0-2f26-4c0b-b86d-0e4a1d9d1c21  ethernet  eth0
+lo                  1b60e9b2-cc5f-4b0f-9ac4-c3b3c0dffb4f  loopback  lo
+
+
+-bash-4.2$ nmcli connection show --active
+NAME        UUID                                  TYPE      DEVICE
+System eth0 7f33b8a0-2f26-4c0b-b86d-0e4a1d9d1c21  ethernet  eth0
+lo          1b60e9b2-cc5f-4b0f-9ac4-c3b3c0dffb4f  loopback  lo
+
+
+-bash-4.2$ ip addr show
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+
+2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 9001 qdisc fq_codel state UP group default qlen 1000
+    inet 192.168.1.50/24 brd 192.168.1.255 scope global dynamic eth0
+       valid_lft 3250sec preferred_lft 3250sec
+    inet6 fe80::4a:2bff:fe91:7c3d/64 scope link
+       valid_lft forever preferred_lft forever
+
+
+-bash-4.2$ systemctl status NetworkManager
+● NetworkManager.service - Network Manager
+   Loaded: loaded (/usr/lib/systemd/system/NetworkManager.service; enabled)
+   Active: active (running)
+   Main PID: 593 (NetworkManager)
+
+
+-bash-4.2$ nmcli device status
+DEVICE  TYPE      STATE      CONNECTION
+eth0    ethernet  connected  System eth0
+lo      loopback  unmanaged  --
+
+
+-bash-4.2$ sudo nmcli connection add type ethernet con-name "static-connection" ifname eth0 ip4 192.168.1.100/24 gw4 192.168.1.1
+Connection 'static-connection' (a1c54a6e-7c0f-4d58-b6be-4c0f5df6b82a) successfully added.
+
+
+-bash-4.2$ sudo nmcli connection modify "static-connection" ipv4.dns "8.8.8.8,8.8.4.4"
+
+-bash-4.2$ sudo nmcli connection modify "static-connection" ipv4.method manual
+
+-bash-4.2$ sudo nmcli connection up "static-connection"
+Connection successfully activated (D-Bus active path: /org/freedesktop/NetworkManager/ActiveConnection/6)
+
+
+-bash-4.2$ nmcli connection show --active
+NAME              UUID                                  TYPE      DEVICE
+static-connection a1c54a6e-7c0f-4d58-b6be-4c0f5df6b82a  ethernet  eth0
+lo                1b60e9b2-cc5f-4b0f-9ac4-c3b3c0dffb4f  loopback  lo
+
+
+-bash-4.2$ ip addr show eth0
+2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP>
+    inet 192.168.1.100/24 brd 192.168.1.255 scope global noprefixroute eth0
+       valid_lft forever preferred_lft forever
+
+
+-bash-4.2$ ping -c 4 8.8.8.8
+4 packets transmitted, 4 received, 0% packet loss
+
+
+-bash-4.2$ sudo nmcli connection add type ethernet con-name "backup-connection" ifname eth0 ip4 192.168.1.101/24 gw4 192.168.1.1
+Connection 'backup-connection' (f9d9b98b-0fa5-4d9b-a94b-2b3b2c6efc1a) successfully added.
+
+
+-bash-4.2$ sudo nmcli connection modify "backup-connection" ipv4.dns "1.1.1.1,1.0.0.1" ipv4.method manual
+
+-bash-4.2$ sudo nmcli connection down "static-connection"
+Connection 'static-connection' successfully deactivated
+
+-bash-4.2$ sudo nmcli connection up "backup-connection"
+Connection successfully activated (D-Bus active path: /org/freedesktop/NetworkManager/ActiveConnection/7)
+
+
+-bash-4.2$ ip addr show eth0
+2: eth0:
+    inet 192.168.1.101/24 brd 192.168.1.255 scope global noprefixroute eth0
+
+
+-bash-4.2$ ping -c 4 google.com
+4 packets transmitted, 4 received, 0% packet loss
+
+
+-bash-4.2$ hostnamectl status
+Static hostname: ip-172-31-22-145
+
+
+-bash-4.2$ sudo hostnamectl set-hostname "lab-server-01"
+
+-bash-4.2$ sudo hostnamectl set-hostname "Lab Server 01" --pretty
+
+-bash-4.2$ sudo hostnamectl set-hostname "temp-lab-server" --transient
+
+-bash-4.2$ hostnamectl status
+Static hostname: lab-server-01
+Pretty hostname: Lab Server 01
+Transient hostname: temp-lab-server
+
+
+-bash-4.2$ ping -c 2 lab-server-01
+2 packets transmitted, 2 received, 0% packet loss
+
+
+-bash-4.2$ sudo systemctl restart NetworkManager
+
+-bash-4.2$ hostname -f
+lab-server-01.localdomain
+
+
+-bash-4.2$ nslookup google.com
+Name: google.com
+Address: 142.250.182.14
+
+
+-bash-4.2$ dig google.com
+status: NOERROR
+
+
+-bash-4.2$ ip route show
+default via 192.168.1.1 dev eth0 proto static
+
+
+-bash-4.2$ cat /etc/resolv.conf
+nameserver 1.1.1.1
+nameserver 1.0.0.1
+
+
+-bash-4.2$ sudo nmcli connection delete "static-connection"
+Connection 'static-connection' successfully deleted.
+
+-bash-4.2$ sudo nmcli connection delete "backup-connection"
+Connection 'backup-connection' successfully deleted.
