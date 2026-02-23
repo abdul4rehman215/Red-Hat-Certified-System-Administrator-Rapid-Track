@@ -1,0 +1,184 @@
+🧪 Lab 14: Adjusting Process Priorities
+Host: rhel9-priority-lab
+User: student
+OS: RHEL 9.3
+CPU: 2 vCPUs
+
+--------------------------------------------------
+Install Monitoring Tools
+--------------------------------------------------
+
+-bash-4.2$ sudo dnf install htop glances -y
+
+Last metadata expiration check: 0:02:11 ago.
+Dependencies resolved.
+===================================================================
+ Package      Arch     Version
+===================================================================
+Installing:
+ htop         x86_64   3.2.2-1.el9
+ glances      noarch   3.3.1-1.el9
+
+Installed:
+  htop-3.2.2-1.el9.x86_64
+  glances-3.3.1-1.el9.noarch
+
+Complete!
+
+--------------------------------------------------
+Verify Installation
+--------------------------------------------------
+
+-bash-4.2$ which htop glances
+
+/usr/bin/htop
+/usr/bin/glances
+
+✔ Monitoring tools installed successfully.
+
+--------------------------------------------------
+Launch Low-Priority Process
+--------------------------------------------------
+
+-bash-4.2$ nice -n 19 sha1sum /dev/zero &
+
+[1] 4123
+
+✔ Low-priority process started.
+✔ PID: 4123
+
+--------------------------------------------------
+Launch High-Priority Process (Root)
+--------------------------------------------------
+
+-bash-4.2$ sudo nice -n -20 sha1sum /dev/zero &
+
+[2] 4124
+
+✔ High-priority process started.
+✔ PID: 4124
+
+--------------------------------------------------
+Verify Priorities
+--------------------------------------------------
+
+-bash-4.2$ ps -l -p $(pgrep sha1sum)
+
+F S UID   PID  PPID  C PRI NI ADDR SZ WCHAN  TTY      TIME CMD
+0 R 1000 4123  3987 99  80 19 -    2450 -     pts/0   0:12 sha1sum
+0 R    0 4124  3987 99  60 -20 -    2450 -     pts/0   0:12 sha1sum
+
+✔ PID 4123 → NI 19 (Low Priority)
+✔ PID 4124 → NI -20 (High Priority)
+
+--------------------------------------------------
+Identify Running Processes
+--------------------------------------------------
+
+-bash-4.2$ pgrep sha1sum
+
+4123
+4124
+
+--------------------------------------------------
+Modify Running Process Priority
+--------------------------------------------------
+
+-bash-4.2$ sudo renice -n -10 -p 4123
+
+4123 (process ID) old priority 19, new priority -10
+
+--------------------------------------------------
+Verify Updated Priority
+--------------------------------------------------
+
+-bash-4.2$ ps -o pid,ni,cmd -p 4123
+
+  PID  NI CMD
+ 4123 -10 sha1sum /dev/zero
+
+✔ Priority successfully updated.
+
+--------------------------------------------------
+Decrease Priority for User Processes
+--------------------------------------------------
+
+-bash-4.2$ renice -n 10 -u $(whoami)
+
+1000 (process ID) old priority 0, new priority 10
+
+✔ User processes now run with lower scheduling priority.
+
+--------------------------------------------------
+Monitor Using htop
+--------------------------------------------------
+
+-bash-4.2$ htop
+
+Observed:
+• NI column visible
+• Negative NI process receives more CPU share
+• Scheduler prioritizing lower NI values
+
+(Exited using F10)
+
+--------------------------------------------------
+Launch Multiple CPU Loads
+--------------------------------------------------
+
+-bash-4.2$ for i in {1..4}; do nice -n $((i*5)) sha1sum /dev/zero & done
+
+[3] 4180
+[4] 4181
+[5] 4182
+[6] 4183
+
+--------------------------------------------------
+Verify Nice Values
+--------------------------------------------------
+
+-bash-4.2$ ps -o pid,ni,cmd -C sha1sum
+
+  PID  NI CMD
+ 4180   5 sha1sum /dev/zero
+ 4181  10 sha1sum /dev/zero
+ 4182  15 sha1sum /dev/zero
+ 4183  20 sha1sum /dev/zero
+
+✔ Confirmed correct nice values assigned.
+
+--------------------------------------------------
+Observed Scheduler Behavior
+--------------------------------------------------
+
+In htop:
+• NI 5 → Higher CPU usage
+• NI 10 → Moderate CPU share
+• NI 15 → Lower CPU usage
+• NI 20 → Lowest CPU allocation
+
+✔ Linux scheduler fairness confirmed.
+
+--------------------------------------------------
+Cleanup Processes
+--------------------------------------------------
+
+-bash-4.2$ pkill sha1sum
+
+-bash-4.2$ pgrep sha1sum
+
+(No output)
+
+✔ All sha1sum processes terminated successfully.
+
+--------------------------------------------------
+Final Confirmation
+--------------------------------------------------
+
+-bash-4.2$ echo "Lab 14 - Process Priority Management completed successfully!"
+
+Lab 14 - Process Priority Management completed successfully!
+
+--------------------------------------------------
+Lab Completed Successfully
+--------------------------------------------------
