@@ -1,0 +1,50 @@
+# Client (rhel9-nfs-client) - ping connectivity check
+PING 192.168.56.10 (192.168.56.10) 56(84) bytes of data.
+64 bytes from 192.168.56.10: icmp_seq=1 ttl=64 time=0.52 ms
+64 bytes from 192.168.56.10: icmp_seq=2 ttl=64 time=0.48 ms
+64 bytes from 192.168.56.10: icmp_seq=3 ttl=64 time=0.50 ms
+
+--- 192.168.56.10 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss
+✔ Connectivity confirmed.
+
+
+# Server (rhel9-nfs-server) - install nfs-utils
+Installed:
+  nfs-utils-2.5.4-20.el9.x86_64
+Complete!
+
+
+# Server - nfs-server status
+Active: active (running)
+✔ NFS service running.
+
+
+# Server - apply exports
+exporting 192.168.56.20:/shared
+
+
+# Server - verify export
+/shared 192.168.56.20(rw,wdelay,root_squash,no_subtree_check)
+✔ Export confirmed.
+
+
+# Client - verify mount
+192.168.56.10:/shared  nfs4   20G  100M   19G   1% /mnt/nfs
+✔ NFS share mounted successfully.
+
+
+# Client - create test file, verify
+-rw-r--r-- 1 root root 0 Jun 10 14:12 testfile
+✔ File created successfully.
+
+
+# Server - verify file appears
+-rw-r--r-- 1 root root 0 Jun 10 14:12 testfile
+✔ File visible on server → NFS working correctly.
+
+
+# Client - verify after reboot (persistent mount)
+/mnt/nfs shows 192.168.56.10:/shared mounted as nfs4
+192.168.56.10:/shared  nfs4   20G  100M   19G   1% /mnt/nfs
+✔ Persistent mount confirmed.
