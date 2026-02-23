@@ -1,0 +1,117 @@
+==============================
+Lab 30: Managing LVM
+Command Outputs (Consolidated)
+==============================
+
+# lsblk
+NAME   MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+sda      8:0    0   32G  0 disk
+└─sda1   8:1    0   32G  0 part /
+sdb      8:16   0   10G  0 disk
+sdc      8:32   0   10G  0 disk
+sdd      8:48   0   10G  0 disk
+
+# pvcreate
+Physical volume "/dev/sdb" successfully created.
+Physical volume "/dev/sdc" successfully created.
+Physical volume "/dev/sdd" successfully created.
+
+# pvs
+PV         VG        Fmt  Attr PSize   PFree
+/dev/sdb            lvm2 ---  10.00g 10.00g
+/dev/sdc            lvm2 ---  10.00g 10.00g
+/dev/sdd            lvm2 ---  10.00g 10.00g
+
+# vgcreate
+Volume group "vg_data" successfully created
+Volume group "vg_backup" successfully created
+
+# vgs
+VG        #PV #LV #SN Attr   VSize  VFree
+vg_data     2   0   0 wz--n- 19.99g 19.99g
+vg_backup   1   0   0 wz--n- 10.00g 10.00g
+
+# lvcreate
+Logical volume "lv_documents" created.
+Logical volume "lv_projects" created.
+Logical volume "lv_backup" created.
+Logical volume "lv_archive" created.
+
+# lvs
+LV           VG        Attr       LSize
+lv_documents vg_data   -wi-a-----  2.00g
+lv_projects  vg_data   -wi-a-----  1.00g
+lv_backup    vg_backup -wi-a----- 500.00m
+lv_archive   vg_backup -wi-a-----  4.75g
+
+# mkfs.ext4 (sample output)
+mke2fs 1.42.9 (28-Dec-2013)
+Creating filesystem...
+Writing superblocks and filesystem accounting information: done
+
+# mount verification
+/dev/mapper/vg_data-lv_documents   2.0G  6.0M  1.9G   1% /mnt/documents
+/dev/mapper/vg_data-lv_projects    991M  2.6M  921M   1% /mnt/projects
+/dev/mapper/vg_backup-lv_backup    488M  2.3M  455M   1% /mnt/backup
+/dev/mapper/vg_backup-lv_archive   4.7G   11M  4.4G   1% /mnt/archive
+
+# lvextend
+Size of logical volume vg_data/lv_documents changed from 2.00 GiB to 3.00 GiB.
+Logical volume vg_data/lv_documents successfully resized.
+
+# resize2fs
+The filesystem on /dev/vg_data/lv_documents is now 786432 blocks long.
+
+# df -h (after extend)
+Filesystem                         Size  Used Avail Use% Mounted on
+/dev/mapper/vg_data-lv_documents   3.0G  8.0M  2.8G   1% /mnt/documents
+
+# lvextend +100%FREE
+Size of logical volume vg_data/lv_projects changed from 1.00 GiB to 16.99 GiB.
+Logical volume vg_data/lv_projects successfully resized.
+
+# df -h (after full extend)
+Filesystem                        Size  Used Avail Use% Mounted on
+/dev/mapper/vg_data-lv_projects    17G   28M   16G   1% /mnt/projects
+
+# Shrink workflow
+e2fsck 1.42.9
+/dev/vg_backup/lv_archive: clean
+
+resize2fs: filesystem resized to 200M
+lvreduce: Logical volume successfully resized.
+
+# df -h (after shrink)
+Filesystem                        Size  Used Avail Use% Mounted on
+/dev/mapper/vg_backup-lv_archive   190M  1.6M  175M   1% /mnt/archive
+
+# Snapshot creation
+Logical volume "lv_documents_snapshot" created.
+
+# lvs | grep snapshot
+lv_documents_snapshot vg_data swi-a-s--- 100.00m lv_documents
+
+# Performance test
+100+0 records in
+100+0 records out
+104857600 bytes copied, ~0.6 s, ~170 MB/s
+
+# Final LVM Overview
+=== Physical Volumes ===
+/dev/sdb   vg_data   10.00g
+/dev/sdc   vg_data   10.00g
+/dev/sdd   vg_backup 10.00g
+
+=== Volume Groups ===
+vg_data   19.99g
+vg_backup 10.00g
+
+=== Logical Volumes ===
+lv_documents 3.00g
+lv_projects 16.99g
+lv_backup 500.00m
+lv_archive 200.00m
+
+==============================
+Lab 30 Completed Successfully
+==============================
