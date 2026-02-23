@@ -1,0 +1,218 @@
+===========================================================
+TASK 1 — GREP OUTPUTS
+=====================
+
+grep "Manager" employees.txt
+John Smith,Manager,Sales,75000
+Sarah Wilson,Manager,IT,80000
+Robert Taylor,Manager,Finance,85000
+Maria Garcia,Manager,Sales,78000
+
+grep -i "manager" employees.txt
+John Smith,Manager,Sales,75000
+Sarah Wilson,Manager,IT,80000
+Robert Taylor,Manager,Finance,85000
+Maria Garcia,Manager,Sales,78000
+
+grep -c "IT" employees.txt
+5
+
+grep -n "Developer" employees.txt
+2:Jane Doe,Developer,IT,65000
+5:Tom Brown,Developer,IT,60000
+8:Emily White,Developer,IT,62000
+
+grep -v "IT" employees.txt
+John Smith,Manager,Sales,75000
+Mike Johnson,Analyst,Finance,55000
+Lisa Davis,Analyst,Sales,50000
+Robert Taylor,Manager,Finance,85000
+Maria Garcia,Manager,Sales,78000
+
+grep "^2024-01-15 10:3[0-5]" server_logs.txt
+2024-01-15 10:30:15 INFO: Server started successfully
+2024-01-15 10:31:22 ERROR: Database connection failed
+2024-01-15 10:32:10 WARNING: High memory usage detected
+2024-01-15 10:33:45 INFO: User login: admin
+2024-01-15 10:34:12 ERROR: File not found: /var/log/app.log
+2024-01-15 10:35:30 INFO: Backup process completed
+
+grep "000$" employees.txt
+Sarah Wilson,Manager,IT,80000
+Tom Brown,Developer,IT,60000
+Lisa Davis,Analyst,Sales,50000
+Robert Taylor,Manager,Finance,85000
+David Lee,Analyst,IT,58000
+
+grep "[0-9]" products.txt
+Laptop,Electronics,999.99,50
+Mouse,Electronics,29.99,200
+Keyboard,Electronics,79.99,150
+Chair,Furniture,299.99,25
+Desk,Furniture,499.99,15
+Monitor,Electronics,399.99,75
+Headphones,Electronics,149.99,100
+Lamp,Furniture,89.99,40
+Notebook,Office,12.99,500
+Pen,Office,2.99,1000
+
+grep -E "(ERROR|WARNING)" server_logs.txt
+2024-01-15 10:31:22 ERROR: Database connection failed
+2024-01-15 10:32:10 WARNING: High memory usage detected
+2024-01-15 10:34:12 ERROR: File not found: /var/log/app.log
+2024-01-15 10:36:18 WARNING: Disk space low
+2024-01-15 10:37:25 ERROR: Network timeout occurred
+
+grep -r "ERROR" .
+./server_logs.txt:2024-01-15 10:31:22 ERROR: Database connection failed
+./server_logs.txt:2024-01-15 10:34:12 ERROR: File not found: /var/log/app.log
+./server_logs.txt:2024-01-15 10:37:25 ERROR: Network timeout occurred
+./logs/server_logs.txt:2024-01-15 10:31:22 ERROR: Database connection failed
+./logs/server_logs.txt:2024-01-15 10:34:12 ERROR: File not found: /var/log/app.log
+./logs/server_logs.txt:2024-01-15 10:37:25 ERROR: Network timeout occurred
+
+===========================================================
+TASK 2 — SED OUTPUTS
+====================
+
+sed 's/IT/Information Technology/g' employees.txt
+Jane Doe,Developer,Information Technology,65000
+Sarah Wilson,Manager,Information Technology,80000
+Tom Brown,Developer,Information Technology,60000
+Emily White,Developer,Information Technology,62000
+David Lee,Analyst,Information Technology,58000
+(Other lines unchanged)
+
+sed '2d' employees.txt
+John Smith,Manager,Sales,75000
+Mike Johnson,Analyst,Finance,55000
+Sarah Wilson,Manager,IT,80000
+Tom Brown,Developer,IT,60000
+Lisa Davis,Analyst,Sales,50000
+Robert Taylor,Manager,Finance,85000
+Emily White,Developer,IT,62000
+David Lee,Analyst,IT,58000
+Maria Garcia,Manager,Sales,78000
+
+sed '/Manager/d' employees.txt
+Jane Doe,Developer,IT,65000
+Mike Johnson,Analyst,Finance,55000
+Tom Brown,Developer,IT,60000
+Lisa Davis,Analyst,Sales,50000
+Emily White,Developer,IT,62000
+David Lee,Analyst,IT,58000
+
+sed 's/[0-9][0-9][0-9][0-9][0-9]/SALARY_HIDDEN/g' employees.txt
+(All salaries replaced with SALARY_HIDDEN)
+
+sed 's/,/|/g' products.txt
+Laptop|Electronics|999.99|50
+Mouse|Electronics|29.99|200
+Keyboard|Electronics|79.99|150
+Chair|Furniture|299.99|25
+Desk|Furniture|499.99|15
+Monitor|Electronics|399.99|75
+Headphones|Electronics|149.99|100
+Lamp|Furniture|89.99|40
+Notebook|Office|12.99|500
+Pen|Office|2.99|1000
+
+===========================================================
+TASK 3 — AWK SCRIPT OUTPUT
+==========================
+
+awk -f employee_analysis.awk employees.txt
+
+# === EMPLOYEE ANALYSIS REPORT ===
+
+DEPARTMENT BREAKDOWN:
+Sales          : 3 employees
+Finance        : 2 employees
+IT             : 5 employees
+
+POSITION BREAKDOWN:
+Developer      : 3 employees
+Analyst        : 3 employees
+Manager        : 4 employees
+
+SALARY STATISTICS:
+Total Employees: 10
+Total Salary: $668000.00
+Average Salary: $66800.00
+Highest Paid: Robert Taylor ($85000.00)
+
+=== END OF REPORT ===
+
+===========================================================
+TASK 4 — PIPELINE OUTPUT
+========================
+
+Jane Doe works in Information Technology earning $65000
+Sarah Wilson works in Information Technology earning $80000
+Tom Brown works in Information Technology earning $60000
+Emily White works in Information Technology earning $62000
+David Lee works in Information Technology earning $58000
+
+Alert at 10:31:22: ERROR: Database connection failed
+Alert at 10:32:10: WARNING: High memory usage detected
+Alert at 10:34:12: ERROR: File not found: /var/log/app.log
+Alert at 10:36:18: WARNING: Disk space low
+Alert at 10:37:25: ERROR: Network timeout occurred
+
+Electronics inventory value: $113994 (5 items)
+
+===========================================================
+TASK 5 — PROCESS_DATA.SH OUTPUT
+===============================
+
+=== COMPREHENSIVE DATA PROCESSING REPORT ===
+Generated on: Mon Feb 23 14:58:12 UTC 2026
+==========================================
+
+1. HIGH-VALUE EMPLOYEES (Salary > 70000):
+   John Smith | Manager | Sales | 75000
+   Sarah Wilson | Manager | IT | 80000
+   Robert Taylor | Manager | Finance | 85000
+   Maria Garcia | Manager | Sales | 78000
+
+2. IT DEPARTMENT ANALYSIS:
+   Total IT employees: 5
+   Managers: 1
+   Developers: 3
+   Analysts: 1
+   Average IT salary: $65000
+
+3. CRITICAL LOG ENTRIES:
+   2024-01-15 10:31:22 [CRITICAL ERROR] Database connection failed
+   2024-01-15 10:34:12 [CRITICAL ERROR] File not found: /var/log/app.log
+   2024-01-15 10:37:25 [CRITICAL ERROR] Network timeout occurred
+
+4. ELECTRONICS INVENTORY:
+   Laptop          : $ 999.99 x  50 = $49999.50
+   Mouse           : $  29.99 x 200 = $ 5998.00
+   Keyboard        : $  79.99 x 150 = $11998.50
+   Monitor         : $ 399.99 x  75 = $29999.25
+   Headphones      : $ 149.99 x 100 = $14999.00
+
+---
+
+TOTAL           : 575 items = $113994.25
+
+==============================================
+Report completed successfully!
+
+===========================================================
+VERIFICATION OUTPUT
+===================
+
+IT employees count:
+5
+
+After replacing IT with Information Technology:
+5
+
+Average salary:
+66800
+
+Highest paid employee:
+Robert Taylor 85000
