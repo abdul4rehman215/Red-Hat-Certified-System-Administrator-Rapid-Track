@@ -1,0 +1,32 @@
+Last metadata expiration check: 0:02:15 ago.
+Nothing to do.
+Complete!
+
+Overall Status: Unknown
+This system is not yet registered.
+
+Registering to: subscription.rhsm.redhat.com
+The system has been registered with ID: 3f12c9ab-4b67-41a0-9a2f-9a8f0f2b1234
+
+Installed Product Current Status:
+Product Name: Red Hat Enterprise Linux for x86_64
+Status: Subscribed
+
+repo id                      repo name
+rhel-9-baseos-rpms           Red Hat Enterprise Linux 9 - BaseOS
+rhel-9-appstream-rpms        Red Hat Enterprise Linux 9 - AppStream
+
+Repository 'codeready-builder-for-rhel-9-x86_64-rpms' is enabled
+Repository 'codeready-builder-for-rhel-9-x86_64-rpms' is disabled
+
+Dependencies resolved.
+Installing:
+ podman.x86_64
+ conmon.x86_64
+ containers-common.noarch
+
+Complete!
+
+podman version 4.4.1
+
+Overall Status: Current
