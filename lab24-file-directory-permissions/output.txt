@@ -1,0 +1,365 @@
+############################################################
+LAB 24: File and Directory Permissions
+Full Command Outputs (Chronological Order)
+Environment: CentOS/RHEL Cloud VM
+############################################################
+
+# mkdir ~/permissions_lab
+(no output)
+
+# cd ~/permissions_lab
+(no output)
+
+# pwd
+/home/centos/permissions_lab
+
+# echo "This is a regular text file" > textfile.txt
+(no output)
+
+# echo "#!/bin/bash" > script.sh
+(no output)
+
+# echo "echo 'Hello World'" >> script.sh
+(no output)
+
+# mkdir testdir
+(no output)
+
+# ls -l
+total 8
+-rw-r--r--. 1 centos centos 29 Feb 23 14:33 script.sh
+drwxr-xr-x. 2 centos centos  6 Feb 23 14:33 testdir
+-rw-r--r--. 1 centos centos 28 Feb 23 14:33 textfile.txt
+
+------------------------------------------------------------
+NUMERIC PERMISSIONS
+------------------------------------------------------------
+
+# chmod 755 script.sh
+(no output)
+
+# ls -l script.sh
+-rwxr-xr-x. 1 centos centos 29 Feb 23 14:33 script.sh
+
+# chmod 600 textfile.txt
+(no output)
+
+# ls -l textfile.txt
+-rw-------. 1 centos centos 28 Feb 23 14:33 textfile.txt
+
+# ./script.sh
+Hello World
+
+------------------------------------------------------------
+SYMBOLIC PERMISSIONS
+------------------------------------------------------------
+
+# chmod g+x,o+x script.sh
+(no output)
+
+# ls -l script.sh
+-rwxr-xr-x. 1 centos centos 29 Feb 23 14:33 script.sh
+
+# chmod g-w textfile.txt
+(no output)
+
+# ls -l textfile.txt
+-rw-------. 1 centos centos 28 Feb 23 14:33 textfile.txt
+
+# chmod u+rw,g+r,o-rwx textfile.txt
+(no output)
+
+# ls -l textfile.txt
+-rw-r-----. 1 centos centos 28 Feb 23 14:33 textfile.txt
+
+------------------------------------------------------------
+DIRECTORY PERMISSIONS
+------------------------------------------------------------
+
+# echo "Directory content" > testdir/file1.txt
+(no output)
+
+# echo "More content" > testdir/file2.txt
+(no output)
+
+# chmod -x testdir
+(no output)
+
+# ls -l
+total 8
+-rwxr-xr-x. 1 centos centos 29 Feb 23 14:33 script.sh
+drw-r--r--. 2 centos centos 40 Feb 23 14:35 testdir
+-rw-r-----. 1 centos centos 28 Feb 23 14:33 textfile.txt
+
+# ls testdir
+ls: cannot open directory testdir: Permission denied
+
+# cd testdir
+-bash: cd: testdir: Permission denied
+
+# chmod +x testdir
+(no output)
+
+# ls testdir
+file1.txt
+file2.txt
+
+------------------------------------------------------------
+USER & GROUP CREATION
+------------------------------------------------------------
+
+# sudo su -
+[root@ip-172-31-18-204 ~]#
+
+# useradd testuser
+(no output)
+
+# passwd testuser
+Changing password for user testuser.
+New password:
+Retype new password:
+passwd: all authentication tokens updated successfully.
+
+# groupadd testgroup
+(no output)
+
+# usermod -a -G testgroup testuser
+(no output)
+
+# exit
+logout
+
+------------------------------------------------------------
+OWNERSHIP CHANGES
+------------------------------------------------------------
+
+# ls -l ~/permissions_lab/
+total 8
+-rwxr-xr-x. 1 centos centos 29 Feb 23 14:33 script.sh
+drwxr-xr-x. 2 centos centos 40 Feb 23 14:35 testdir
+-rw-r-----. 1 centos centos 28 Feb 23 14:33 textfile.txt
+
+# sudo chown testuser ~/permissions_lab/textfile.txt
+(no output)
+
+# ls -l ~/permissions_lab/textfile.txt
+-rw-r-----. 1 testuser centos 28 Feb 23 14:33 textfile.txt
+
+# sudo chown testuser:testgroup ~/permissions_lab/script.sh
+(no output)
+
+# ls -l ~/permissions_lab/script.sh
+-rwxr-xr-x. 1 testuser testgroup 29 Feb 23 14:33 script.sh
+
+# sudo chown -R testuser:testgroup ~/permissions_lab/testdir
+(no output)
+
+# ls -l ~/permissions_lab/
+total 8
+-rwxr-xr-x. 1 testuser testgroup 29 Feb 23 14:33 script.sh
+drwxr-xr-x. 2 testuser testgroup 40 Feb 23 14:35 testdir
+-rw-r-----. 1 testuser centos    28 Feb 23 14:33 textfile.txt
+
+# ls -l ~/permissions_lab/testdir/
+total 8
+-rw-r--r--. 1 testuser testgroup 18 Feb 23 14:35 file1.txt
+-rw-r--r--. 1 testuser testgroup 13 Feb 23 14:35 file2.txt
+
+# sudo chgrp centos ~/permissions_lab/textfile.txt
+(no output)
+
+# ls -l ~/permissions_lab/textfile.txt
+-rw-r-----. 1 testuser centos 28 Feb 23 14:33 textfile.txt
+
+------------------------------------------------------------
+ACL VERIFICATION
+------------------------------------------------------------
+
+# which setfacl getfacl
+/usr/bin/setfacl
+/usr/bin/getfacl
+
+# sudo yum install acl -y
+Package acl already installed and latest version
+Nothing to do
+
+# mount | grep acl
+/dev/nvme0n1p1 on / type xfs (rw,relatime,attr2,inode64,noquota)
+
+------------------------------------------------------------
+ACL CONFIGURATION
+------------------------------------------------------------
+
+# echo "ACL test content" > acltest.txt
+(no output)
+
+# ls -l acltest.txt
+-rw-r--r--. 1 centos centos 17 Feb 23 14:41 acltest.txt
+
+# getfacl acltest.txt
+# file: acltest.txt
+# owner: centos
+# group: centos
+user::rw-
+group::r--
+other::r--
+
+# setfacl -m u:testuser:rw acltest.txt
+(no output)
+
+# getfacl acltest.txt
+# file: acltest.txt
+# owner: centos
+# group: centos
+user::rw-
+user:testuser:rw-
+group::r--
+mask::rw-
+other::r--
+
+# ls -l acltest.txt
+-rw-rw-r--+ 1 centos centos 17 Feb 23 14:41 acltest.txt
+
+# setfacl -m g:testgroup:r acltest.txt
+(no output)
+
+# getfacl acltest.txt
+# file: acltest.txt
+# owner: centos
+# group: centos
+user::rw-
+user:testuser:rw-
+group::r--
+group:testgroup:r--
+mask::rw-
+other::r--
+
+------------------------------------------------------------
+DEFAULT ACLS
+------------------------------------------------------------
+
+# setfacl -m d:u:testuser:rwx testdir
+# setfacl -m d:g:testgroup:rx testdir
+(no output)
+
+# getfacl testdir
+# file: testdir
+# owner: testuser
+# group: testgroup
+user::rwx
+group::r-x
+other::r-x
+default:user::rwx
+default:user:testuser:rwx
+default:group::r-x
+default:group:testgroup:r-x
+default:mask::rwx
+default:other::r-x
+
+# echo "Testing default ACL" > testdir/newfile.txt
+(no output)
+
+# getfacl testdir/newfile.txt
+# file: testdir/newfile.txt
+# owner: centos
+# group: centos
+user::rw-
+user:testuser:rwx   #effective:rw-
+group::r--
+group:testgroup:r-x #effective:r--
+mask::rw-
+other::r--
+
+------------------------------------------------------------
+REMOVE ACL ENTRIES
+------------------------------------------------------------
+
+# setfacl -x u:testuser acltest.txt
+(no output)
+
+# getfacl acltest.txt
+# file: acltest.txt
+# owner: centos
+# group: centos
+user::rw-
+group::r--
+group:testgroup:r--
+mask::r--
+other::r--
+
+# setfacl -b acltest.txt
+(no output)
+
+# getfacl acltest.txt
+# file: acltest.txt
+# owner: centos
+# group: centos
+user::rw-
+group::r--
+other::r--
+
+# ls -l acltest.txt
+-rw-r--r--. 1 centos centos 17 Feb 23 14:41 acltest.txt
+
+------------------------------------------------------------
+MULTIPLE ACL SET
+------------------------------------------------------------
+
+# setfacl -m u:testuser:rw,g:testgroup:r,o::--- acltest.txt
+(no output)
+
+# getfacl acltest.txt
+# file: acltest.txt
+# owner: centos
+# group: centos
+user::rw-
+user:testuser:rw-
+group::r--
+group:testgroup:r--
+mask::rw-
+other::---
+
+------------------------------------------------------------
+PERMISSION TEST SCRIPT OUTPUT
+------------------------------------------------------------
+
+# chmod +x permission_test.sh
+(no output)
+
+# ./permission_test.sh
+=== Permission Testing Script ===
+Current user: centos
+Current directory: /home/centos/permissions_lab
+
+=== File Permissions ===
+-rw-r--r--. 1 centos   centos    17 Feb 23 14:41 acltest.txt
+-rwxr-xr-x. 1 testuser testgroup 29 Feb 23 14:33 script.sh
+-rwxr-xr-x. 1 centos   centos   742 Feb 23 14:48 permission_test.sh
+-rw-r-----. 1 testuser centos    28 Feb 23 14:33 textfile.txt
+
+=== Directory Permissions ===
+drwxr-xr-x+ 2 testuser testgroup 57 Feb 23 14:45 testdir
+
+=== ACL Information ===
+Files with ACLs:
+-rw-rw----+ 1 centos   centos    17 Feb 23 14:41 acltest.txt
+drwxr-xr-x+ 2 testuser testgroup 57 Feb 23 14:45 testdir
+
+=== Detailed ACL for acltest.txt ===
+# file: acltest.txt
+# owner: centos
+# group: centos
+user::rw-
+user:testuser:rw-
+group::r--
+group:testgroup:r--
+mask::rw-
+other::---
+
+=== Testing file access ===
+✗ Cannot read textfile.txt
+✗ Cannot execute script.sh
+
+############################################################
+END OF LAB 24 OUTPUT
+############################################################
