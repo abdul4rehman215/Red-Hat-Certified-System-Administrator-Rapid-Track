@@ -1,0 +1,307 @@
+############################################
+LAB 23: Managing Users and Groups
+Full Command Outputs (Chronological Order)
+Environment: CentOS/RHEL Cloud VM
+############################################
+
+# View existing users
+postfix:x:89:89::/var/spool/postfix:/sbin/nologin
+sshd:x:74:74:Privilege-separated SSH:/var/empty/sshd:/sbin/nologin
+centos:x:1000:1000:Cloud User:/home/centos:/bin/bash
+tcpdump:x:72:72::/:/sbin/nologin
+chrony:x:997:994::/var/lib/chrony:/sbin/nologin
+
+# whoami
+centos
+
+# sudo su -
+[root@ip-172-31-18-204 ~]#
+
+------------------------------------------------------------
+USER CREATION
+------------------------------------------------------------
+
+# useradd john
+(no output)
+
+# grep john /etc/passwd
+john:x:1001:1001::/home/john:/bin/bash
+
+# ls -la /home/
+total 12
+drwxr-xr-x.  3 root  root    19 Feb 23 13:52 .
+dr-xr-xr-x. 17 root  root   224 Feb 23 13:52 ..
+drwx------.  6 centos centos 141 Feb 23 14:12 centos
+drwx------.  2 john  john    62 Feb 23 14:23 john
+
+# useradd -m -d /home/custom_jane jane
+(no output)
+
+# useradd -s /bin/bash mike
+(no output)
+
+# useradd -c "Sarah Johnson" sarah
+(no output)
+
+# useradd -u 1500 tom
+(no output)
+
+# useradd -c "Alice Smith" -m -d /home/alice_home -s /bin/bash -u 1501 alice
+(no output)
+
+# grep -E "john|jane|mike|sarah|tom|alice" /etc/passwd
+john:x:1001:1001::/home/john:/bin/bash
+jane:x:1002:1002::/home/custom_jane:/bin/bash
+mike:x:1003:1003::/home/mike:/bin/bash
+sarah:x:1004:1004:Sarah Johnson:/home/sarah:/bin/bash
+tom:x:1500:1500::/home/tom:/bin/bash
+alice:x:1501:1501:Alice Smith:/home/alice_home:/bin/bash
+
+# ls -la /home/
+total 24
+drwxr-xr-x.  3 root  root        19 Feb 23 13:52 .
+dr-xr-xr-x. 17 root  root       224 Feb 23 13:52 ..
+drwx------.  6 centos centos     141 Feb 23 14:12 centos
+drwx------.  2 john  john         62 Feb 23 14:23 john
+drwx------.  2 jane  jane         62 Feb 23 14:24 custom_jane
+drwx------.  2 mike  mike         62 Feb 23 14:24 mike
+drwx------.  2 sarah sarah        62 Feb 23 14:24 sarah
+drwx------.  2 tom   tom          62 Feb 23 14:24 tom
+drwx------.  2 alice alice        62 Feb 23 14:24 alice_home
+
+# id john
+uid=1001(john) gid=1001(john) groups=1001(john)
+
+# id alice
+uid=1501(alice) gid=1501(alice) groups=1501(alice)
+
+------------------------------------------------------------
+PASSWORD SETTING
+------------------------------------------------------------
+
+# passwd john
+Changing password for user john.
+New password:
+Retype new password:
+passwd: all authentication tokens updated successfully.
+
+# passwd jane
+Changing password for user jane.
+New password:
+Retype new password:
+passwd: all authentication tokens updated successfully.
+
+# passwd mike
+Changing password for user mike.
+New password:
+Retype new password:
+passwd: all authentication tokens updated successfully.
+
+# passwd sarah
+Changing password for user sarah.
+New password:
+Retype new password:
+passwd: all authentication tokens updated successfully.
+
+------------------------------------------------------------
+USER MODIFICATIONS
+------------------------------------------------------------
+
+# usermod -c "John Doe - Developer" john
+(no output)
+
+# usermod -d /home/john_new -m john
+(no output)
+
+# yum install -y zsh
+Loaded plugins: fastestmirror
+Resolving Dependencies
+--> Running transaction check
+---> Package zsh.x86_64 0:5.0.2-34.el7_8.2 will be installed
+Installed:
+  zsh.x86_64 0:5.0.2-34.el7_8.2
+Complete!
+
+# usermod -s /bin/zsh sarah
+(no output)
+
+# usermod -u 1502 mike
+(no output)
+
+# usermod -L tom
+(no output)
+
+# usermod -U tom
+(no output)
+
+# grep -E "john|sarah|mike|tom" /etc/passwd
+john:x:1001:1001:John Doe - Developer:/home/john_new:/bin/bash
+mike:x:1502:1003::/home/mike:/bin/bash
+sarah:x:1004:1004:Sarah Johnson:/home/sarah:/bin/zsh
+tom:x:1500:1500::/home/tom:/bin/bash
+
+# passwd -S john
+john PS 2026-02-23 0 99999 7 -1 (Password set, SHA512 crypt.)
+
+# passwd -S tom
+tom LK 2026-02-23 0 99999 7 -1 (Password locked.)
+
+# su - john
+Last login: Mon Feb 23 14:27:01 UTC 2026 on pts/0
+[john@ip-172-31-18-204 ~]$ whoami
+john
+[john@ip-172-31-18-204 ~]$ pwd
+/home/john_new
+[john@ip-172-31-18-204 ~]$ exit
+logout
+
+------------------------------------------------------------
+GROUP CREATION
+------------------------------------------------------------
+
+# groupadd developers
+# groupadd testers
+# groupadd managers
+# groupadd -g 2000 admins
+# groupadd -r sysops
+
+# grep -E "developers|testers|managers|admins|sysops" /etc/group
+developers:x:2001:
+testers:x:2002:
+managers:x:2003:
+admins:x:2000:
+sysops:x:199:
+
+# getent group developers
+developers:x:2001:
+
+# getent group admins
+admins:x:2000:
+
+------------------------------------------------------------
+GROUP MEMBERSHIP
+------------------------------------------------------------
+
+# usermod -g developers john
+# usermod -G testers,managers jane
+# usermod -a -G developers,admins mike
+# gpasswd -a sarah developers
+Adding user sarah to group developers
+
+# gpasswd -M alice,tom testers
+
+# groups john
+john : developers
+
+# groups jane
+jane : jane testers managers
+
+# groups mike
+mike : mike developers admins
+
+# getent group developers
+developers:x:2001:sarah,mike
+
+# getent group testers
+testers:x:2002:alice,tom,jane
+
+# getent group managers
+managers:x:2003:jane
+
+# id john
+uid=1001(john) gid=2001(developers) groups=2001(developers)
+
+# id jane
+uid=1002(jane) gid=1002(jane) groups=1002(jane),2002(testers),2003(managers)
+
+------------------------------------------------------------
+GROUP MODIFICATION
+------------------------------------------------------------
+
+# groupmod -n development developers
+(no output)
+
+# groupmod -g 2001 admins
+groupmod: GID '2001' already exists
+
+# groupmod -g 2004 admins
+(no output)
+
+# getent group development
+development:x:2001:sarah,mike
+
+# getent group admins
+admins:x:2004:mike
+
+------------------------------------------------------------
+USER DELETION
+------------------------------------------------------------
+
+# userdel tom
+(no output)
+
+# userdel -r alice
+userdel: alice mail spool (/var/spool/mail/alice) not found
+
+# userdel -f mike
+(no output)
+
+# ls -la /home/
+total 16
+drwxr-xr-x.  3 root  root       19 Feb 23 13:52 .
+dr-xr-xr-x. 17 root  root      224 Feb 23 13:52 ..
+drwx------.  6 centos centos    141 Feb 23 14:12 centos
+drwx------.  2 jane  jane       62 Feb 23 14:24 custom_jane
+drwx------.  2 john  development 62 Feb 23 14:26 john_new
+drwx------.  2 sarah sarah      62 Feb 23 14:24 sarah
+drwx------.  2 tom   tom        62 Feb 23 14:24 tom
+
+------------------------------------------------------------
+ADVANCED USER FILES
+------------------------------------------------------------
+
+# head -5 /etc/passwd
+root:x:0:0:root:/root:/bin/bash
+bin:x:1:1:bin:/bin:/sbin/nologin
+daemon:x:2:2:daemon:/sbin:/sbin/nologin
+adm:x:3:4:adm:/var/adm:/sbin/nologin
+lp:x:4:7:lp:/var/spool/lpd:/sbin/nologin
+
+# head -5 /etc/group
+root:x:0:
+bin:x:1:
+daemon:x:2:
+sys:x:3:
+adm:x:4:
+
+# head -5 /etc/shadow
+root:$6$wO...REDACTED...k/:19758:0:99999:7:::
+bin:*:18333:0:99999:7:::
+daemon:*:18333:0:99999:7:::
+adm:*:18333:0:99999:7:::
+lp:*:18333:0:99999:7:::
+
+------------------------------------------------------------
+SECURITY PRACTICES
+------------------------------------------------------------
+
+# useradd secuser
+# passwd secuser
+Changing password for user secuser.
+passwd: all authentication tokens updated successfully.
+
+# chage -l secuser
+Last password change					: Feb 23, 2026
+Password expires					: May 24, 2026
+Password inactive					: never
+Account expires						: never
+Minimum number of days between password change		: 7
+Maximum number of days between password change		: 90
+Number of days of warning before password expires	: 7
+
+# passwd -S secuser
+secuser LK 2026-02-23 0 99999 7 -1 (Password locked.)
+
+############################################
+END OF OUTPUT
+############################################
