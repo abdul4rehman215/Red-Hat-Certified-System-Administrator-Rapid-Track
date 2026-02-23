@@ -1,0 +1,93 @@
+============================================================
+Lab 01 – Local Login to Linux Systems
+Execution Output Log
+============================================================
+
+
+==============================
+SYSTEM BOOT
+==============================
+
+Booting CentOS Linux (Core) 7 ...
+[  OK  ] Started Login Service.
+[  OK  ] Reached target Login Prompts.
+
+CentOS Linux 7 (Core)
+Kernel 3.10.0-1160.el7.x86_64 on an x86_64
+
+localhost login:
+
+
+==============================
+SWITCH TO TTY2
+==============================
+
+(Simulated keystroke: Ctrl + Alt + F2)
+
+CentOS Linux 7 (Core)
+Kernel 3.10.0-1160.el7.x86_64 on an x86_64 (tty2)
+
+localhost login:
+
+
+==============================
+LOGIN ON TTY2
+==============================
+
+localhost login: user1
+Password:
+
+Last login: Mon Feb 19 10:14:22 on tty2
+[user1@localhost ~]$
+
+
+==============================
+SWITCH TO TTY3
+==============================
+
+(Simulated keystroke: Ctrl + Alt + F3)
+
+CentOS Linux 7 (Core)
+Kernel 3.10.0-1160.el7.x86_64 on an x86_64 (tty3)
+
+localhost login: user1
+Password:
+
+Last login: Mon Feb 19 10:16:03 on tty3
+[user1@localhost ~]$
+
+
+==============================
+RETURN TO TTY2
+==============================
+
+(Simulated keystroke: Ctrl + Alt + F2)
+
+[user1@localhost ~]$
+
+
+==============================
+CHECK CURRENT TERMINAL
+==============================
+
+[user1@localhost ~]$ tty
+/dev/tty2
+
+
+==============================
+LIST ACTIVE SESSIONS
+==============================
+
+[user1@localhost ~]$ who
+user1    tty2         2026-02-23 10:14
+user1    tty3         2026-02-23 10:16
+
+
+==============================
+LAB COMPLETED SUCCESSFULLY
+==============================
+
+- Local login successful
+- Multiple TTY sessions verified
+- Current terminal confirmed
+- Active users listed
