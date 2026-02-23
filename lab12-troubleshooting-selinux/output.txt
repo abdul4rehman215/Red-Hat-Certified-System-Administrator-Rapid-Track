@@ -1,0 +1,162 @@
+🧪 Lab 12: Troubleshooting SELinux
+Host: rhel9-selinux-troubleshoot
+User: student
+OS: RHEL 9.3
+
+--------------------------------------------------
+Installing Required Packages
+--------------------------------------------------
+
+-bash-4.2$ sudo dnf install -y policycoreutils-python-utils setools-console audit
+
+Last metadata expiration check: 0:01:33 ago.
+Dependencies resolved.
+===================================================================
+ Package                             Arch      Version
+===================================================================
+Installing:
+ policycoreutils-python-utils        noarch    3.5-1.el9
+ setools-console                     x86_64    4.4.1-2.el9
+ audit                               x86_64    3.0.9-1.el9
+
+Installed:
+  policycoreutils-python-utils-3.5-1.el9.noarch
+  setools-console-4.4.1-2.el9.x86_64
+  audit-3.0.9-1.el9.x86_64
+
+Complete!
+
+--------------------------------------------------
+Check SELinux Status
+--------------------------------------------------
+
+-bash-4.2$ sestatus
+
+SELinux status:                 enabled
+SELinuxfs mount:                /sys/fs/selinux
+SELinux root directory:         /etc/selinux
+Loaded policy name:             targeted
+Current mode:                   enforcing
+Mode from config file:          enforcing
+Policy MLS status:              enabled
+Policy deny_unknown status:     allowed
+Max kernel policy version:      33
+
+--------------------------------------------------
+Simulate SELinux Denial
+--------------------------------------------------
+
+-bash-4.2$ sudo touch /var/www/html/test.html
+(No output)
+
+-bash-4.2$ sudo chcon -t default_t /var/www/html/test.html
+(No output)
+
+--------------------------------------------------
+Check Audit Logs for AVC Denials
+--------------------------------------------------
+
+-bash-4.2$ sudo ausearch -m avc -ts recent
+
+time->Mon Feb 23 16:05:12 2026
+type=AVC msg=audit(1708704312.123:456): avc:  denied  { read } for  pid=1542 comm="httpd"
+name="test.html" dev="nvme0n1p1" ino=123456
+scontext=system_u:system_r:httpd_t:s0
+tcontext=unconfined_u:object_r:default_t:s0
+tclass=file
+
+--------------------------------------------------
+Alternative Log Search
+--------------------------------------------------
+
+-bash-4.2$ sudo grep "avc:.*denied" /var/log/audit/audit.log
+
+type=AVC msg=audit(1708704312.123:456): avc: denied { read } for pid=1542 comm="httpd"
+
+--------------------------------------------------
+Generate Custom Policy Module
+--------------------------------------------------
+
+-bash-4.2$ sudo ausearch -m avc -ts recent | audit2allow -M mypolicy
+
+Generating type enforcement file: mypolicy.te
+Compiling policy: checkmodule -M -m -o mypolicy.mod mypolicy.te
+Building policy package: semodule_package -o mypolicy.pp -m mypolicy.mod
+
+--------------------------------------------------
+Install Custom Policy Module
+--------------------------------------------------
+
+-bash-4.2$ sudo semodule -i mypolicy.pp
+(No output)
+
+--------------------------------------------------
+Verify Policy Module Installed
+--------------------------------------------------
+
+-bash-4.2$ sudo semodule -l | grep mypolicy
+
+mypolicy
+
+--------------------------------------------------
+Generate Human-Readable Rule
+--------------------------------------------------
+
+-bash-4.2$ sudo ausearch -m avc -ts recent | audit2allow
+
+#============= httpd_t ==============
+allow httpd_t default_t:file read;
+
+--------------------------------------------------
+Generate and Install Another Policy
+--------------------------------------------------
+
+-bash-4.2$ sudo ausearch -m avc -ts recent | audit2allow -M mynewpolicy
+
+Generating type enforcement file: mynewpolicy.te
+Compiling policy: checkmodule -M -m -o mynewpolicy.mod mynewpolicy.te
+Building policy package: semodule_package -o mynewpolicy.pp -m mynewpolicy.mod
+
+-bash-4.2$ sudo semodule -i mynewpolicy.pp
+(No output)
+
+--------------------------------------------------
+Verify No New AVC Denials
+--------------------------------------------------
+
+-bash-4.2$ sudo ausearch -m avc -ts recent
+
+<no matches>
+
+--------------------------------------------------
+Restore Correct Context (Preferred Fix)
+--------------------------------------------------
+
+-bash-4.2$ sudo restorecon -v /var/www/html/test.html
+restorecon reset /var/www/html/test.html context \
+unconfined_u:object_r:default_t:s0 -> \
+unconfined_u:object_r:httpd_sys_content_t:s0
+
+--------------------------------------------------
+Verify Context
+--------------------------------------------------
+
+-bash-4.2$ ls -Z /var/www/html/test.html
+
+unconfined_u:object_r:httpd_sys_content_t:s0 /var/www/html/test.html
+
+--------------------------------------------------
+Cleanup
+--------------------------------------------------
+
+-bash-4.2$ sudo semodule -r mypolicy
+-bash-4.2$ sudo semodule -r mynewpolicy
+-bash-4.2$ sudo rm -f mypolicy.te mypolicy.mod mypolicy.pp
+-bash-4.2$ sudo rm -f mynewpolicy.te mynewpolicy.mod mynewpolicy.pp
+-bash-4.2$ sudo rm -f /var/www/html/test.html
+
+(No output)
+
+--------------------------------------------------
+Lab Completed Successfully
+--------------------------------------------------
