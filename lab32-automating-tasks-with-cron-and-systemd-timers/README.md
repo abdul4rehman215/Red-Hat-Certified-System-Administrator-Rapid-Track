@@ -1,4 +1,4 @@
-# 🧪 Lab 12: Automating Tasks with Cron and systemd Timers (CentOS/RHEL 8/9)
+# 🧪 Lab 32: Automating Tasks with Cron and systemd Timers (CentOS/RHEL 8/9)
 
 ## 🎯 Objective
 This lab focuses on **automating administrative tasks** using two scheduling mechanisms in RHEL-based systems:
@@ -41,7 +41,7 @@ Before performing this lab, the following knowledge was required:
 ## 📁 Repository Structure
 
 ```text
-lab12-automating-tasks-with-cron-and-systemd-timers/
+lab32-automating-tasks-with-cron-and-systemd-timers/
 ├── README.md
 ├── commands.sh
 ├── output.txt
