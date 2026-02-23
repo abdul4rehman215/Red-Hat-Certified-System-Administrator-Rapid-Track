@@ -1,0 +1,58 @@
+toor@ip-172-31-10-254:~$ ls -l
+total 8
+-rw-r--r-- 1 toor toor 1024 Feb 23 14:40 file.txt
+drwxr-xr-x 2 toor toor 4096 Feb 23 14:41 directory
+
+
+toor@ip-172-31-10-254:~$ touch testfile.txt
+
+
+toor@ip-172-31-10-254:~$ chmod 640 testfile.txt
+
+
+toor@ip-172-31-10-254:~$ ls -l testfile.txt
+-rw-r----- 1 toor toor 0 Feb 23 14:45 testfile.txt
+
+
+toor@ip-172-31-10-254:~$ chmod u+x testfile.txt
+
+
+toor@ip-172-31-10-254:~$ chmod o-r testfile.txt
+
+
+toor@ip-172-31-10-254:~$ ls -l testfile.txt
+-rwxr----- 1 toor toor 0 Feb 23 14:45 testfile.txt
+
+
+toor@ip-172-31-10-254:~$ sudo useradd testuser
+[sudo] password for toor:
+# (No output indicates success)
+
+
+toor@ip-172-31-10-254:~$ sudo chown testuser testfile.txt
+
+
+toor@ip-172-31-10-254:~$ ls -l testfile.txt
+-rwxr----- 1 testuser toor 0 Feb 23 14:45 testfile.txt
+
+
+toor@ip-172-31-10-254:~$ sudo groupadd testgroup
+
+
+toor@ip-172-31-10-254:~$ sudo chgrp testgroup testfile.txt
+
+
+toor@ip-172-31-10-254:~$ ls -l testfile.txt
+-rwxr----- 1 testuser testgroup 0 Feb 23 14:45 testfile.txt
+
+
+toor@ip-172-31-10-254:~$ sudo chown testuser:testgroup testfile.txt
+
+
+toor@ip-172-31-10-254:~$ sudo userdel testuser
+
+
+toor@ip-172-31-10-254:~$ sudo groupdel testgroup
+
+
+toor@ip-172-31-10-254:~$ rm testfile.txt
