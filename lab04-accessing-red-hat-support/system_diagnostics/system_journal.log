@@ -1,0 +1,20 @@
+-- Logs begin at Mon 2026-02-22 11:58:12 UTC, end at Mon 2026-02-23 12:38:45 UTC. --
+Feb 23 11:40:01 centos-stream9 systemd[1]: Starting Cleanup of Temporary Directories...
+Feb 23 11:40:01 centos-stream9 systemd[1]: Finished Cleanup of Temporary Directories.
+Feb 23 11:42:17 centos-stream9 systemd[1]: Starting Network Manager Script Dispatcher Service...
+Feb 23 11:42:17 centos-stream9 systemd[1]: Started Network Manager Script Dispatcher Service.
+Feb 23 11:45:02 centos-stream9 kernel: audit: type=1400 audit(1708688702.123:92): apparmor="STATUS" operation="profile_load" profile="unconfined"
+Feb 23 11:47:33 centos-stream9 sshd[1102]: Accepted publickey for student from 172.31.10.201 port 51422 ssh2: RSA SHA256:V7kJx8k2s9aLpM0ZfT4r1E7qR6yX3bP
+Feb 23 11:47:33 centos-stream9 sshd[1102]: pam_unix(sshd:session): session opened for user student(uid=1000)
+Feb 23 11:50:18 centos-stream9 podman[1290]: Pulling image "quay.io/podman/hello:latest"
+Feb 23 11:50:20 centos-stream9 podman[1290]: Image pull complete
+Feb 23 11:50:20 centos-stream9 podman[1290]: Container started successfully
+Feb 23 11:52:10 centos-stream9 dnf[1423]: Upgraded: bash-5.1.8-6.el9.x86_64
+Feb 23 11:52:11 centos-stream9 systemd[1]: Reloading.
+Feb 23 12:01:22 centos-stream9 kernel: virtio_net virtio0 eth0: renamed from ens3
+Feb 23 12:10:12 centos-stream9 CRON[1522]: (student) CMD (journalctl --since "1 day ago")
+Feb 23 12:25:40 centos-stream9 systemd[1]: Starting dnf makecache...
+Feb 23 12:25:43 centos-stream9 systemd[1]: Finished dnf makecache.
+Feb 23 12:30:11 centos-stream9 sudo[1662]: student : TTY=pts/0 ; PWD=/home/student ; USER=root ; COMMAND=/usr/bin/dnf install -y inxi
+Feb 23 12:30:11 centos-stream9 sudo[1662]: pam_unix(sudo:session): session opened for user root(uid=0)
+Feb 23 12:30:13 centos-stream9 sudo[1662]: pam_unix(sudo:session): session closed for user root
