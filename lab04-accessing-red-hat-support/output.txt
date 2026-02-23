@@ -1,0 +1,166 @@
+==============================================
+Lab 04: Accessing Red Hat Support
+==============================================
+
+----------------------------------------------
+Installing System Information Tool
+----------------------------------------------
+
+-bash-4.2$ sudo dnf install -y inxi
+Last metadata expiration check: 0:03:22 ago.
+Dependencies resolved.
+================================================================================
+ Package      Arch     Version        Repository     Size
+================================================================================
+Installing:
+ inxi         noarch   3.3.19-1.el9   epel           512 k
+
+Transaction Summary
+================================================================================
+Install  1 Package
+
+Installed:
+  inxi-3.3.19-1.el9.noarch
+
+Complete!
+
+----------------------------------------------
+Running System Overview
+----------------------------------------------
+
+-bash-4.2$ inxi -Fxz
+System:
+  Kernel: 5.14.0-427.el9.x86_64 arch: x86_64 bits: 64
+  Console: tty pts/0
+  Distro: CentOS Stream release 9
+Machine:
+  Type: KVM virtual machine
+CPU:
+  Info: 2-core Intel Xeon
+  Speed: 2400 MHz
+Memory:
+  RAM: total: 3.8 GiB used: 1.1 GiB
+Graphics:
+  Device: Red Hat Virtio GPU
+Network:
+  Device: Red Hat Virtio network driver: virtio_net
+  IF: eth0 state: up speed: 1000 Mbps
+Drives:
+  Local Storage: total: 40 GiB
+  ID-1: /dev/nvme0n1 size: 40 GiB
+
+-bash-4.2$ uname -a
+Linux centos-stream9 5.14.0-427.el9.x86_64 #1 SMP x86_64 GNU/Linux
+
+-bash-4.2$ cat /etc/os-release
+NAME="CentOS Stream"
+VERSION="9"
+ID="centos"
+ID_LIKE="rhel fedora"
+PRETTY_NAME="CentOS Stream 9"
+
+-bash-4.2$ lscpu
+Architecture:        x86_64
+CPU(s):              2
+Model name:          Intel(R) Xeon(R)
+
+-bash-4.2$ free -h
+              total        used        free      shared  buff/cache   available
+Mem:          3.8Gi       1.1Gi       1.9Gi       50Mi       800Mi       2.5Gi
+Swap:         2.0Gi          0B       2.0Gi
+
+-bash-4.2$ lsblk
+NAME        MAJ:MIN RM SIZE RO TYPE MOUNTPOINT
+nvme0n1     259:0    0  40G  0 disk
+└─nvme0n1p1 259:1    0  40G  0 part /
+
+----------------------------------------------
+Creating Diagnostics Directory
+----------------------------------------------
+
+-bash-4.2$ mkdir ~/system_diagnostics
+-bash-4.2$ cd ~/system_diagnostics
+
+----------------------------------------------
+Collecting Logs
+----------------------------------------------
+
+-bash-4.2$ journalctl --since "1 day ago" > system_journal.log
+
+-bash-4.2$ dmesg > dmesg_output.log
+
+-bash-4.2$ rpm -qa > installed_packages.list
+
+----------------------------------------------
+Creating Tar Archive
+----------------------------------------------
+
+-bash-4.2$ tar -czvf system_diagnostics_20260223.tar.gz *
+dmesg_output.log
+installed_packages.list
+system_journal.log
+
+-bash-4.2$ ls -lh
+-rw-r--r-- 1 student student 4.2M Feb 23 12:40 system_diagnostics_20260223.tar.gz
+
+----------------------------------------------
+Submitting Support Case (Web Portal)
+----------------------------------------------
+
+Accessed: https://access.redhat.com
+Logged in with Red Hat Developer Account
+Navigated to: Support → Open a Case
+
+Case Details:
+Product: Red Hat Enterprise Linux
+Severity: 3 – Moderate
+Subject: Podman container startup failure investigation
+Description: System experiencing intermittent container startup delays.
+Attached File: system_diagnostics_20260223.tar.gz
+
+Case Number Received: 03847291
+Confirmation Email Sent
+
+----------------------------------------------
+Knowledge Base Research
+----------------------------------------------
+
+Searched: Podman container startup failure
+
+Reviewed Articles:
+- Podman networking issues
+- SELinux container restrictions
+- Cgroup troubleshooting
+
+----------------------------------------------
+Local Podman Test
+----------------------------------------------
+
+-bash-4.2$ podman run --rm hello-world
+Resolved "hello-world" as an alias
+Trying to pull quay.io/podman/hello:latest...
+Hello from Podman!
+This message shows that your installation appears to be working correctly.
+
+----------------------------------------------
+Escalating Support Case
+----------------------------------------------
+
+Navigated to: Support → My Cases
+Opened Case #03847291
+Added Comment
+Selected: Request Escalation
+Justification: Impacting container-based development workflow.
+
+Case Status Updated:
+Status: Escalation Requested
+
+----------------------------------------------
+Cleanup
+----------------------------------------------
+
+-bash-4.2$ rm -rf ~/system_diagnostics
+
+----------------------------------------------
+Lab 04 Completed Successfully
+----------------------------------------------
