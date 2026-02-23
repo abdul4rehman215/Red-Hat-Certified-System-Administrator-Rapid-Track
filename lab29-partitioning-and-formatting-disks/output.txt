@@ -1,0 +1,134 @@
+==========================================================
+Lab 29: Partitioning and Formatting Disks
+Environment: CentOS/RHEL (-bash-4.2$)
+==========================================================
+
+----------------------------
+1. lsblk
+----------------------------
+NAME   MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+sda      8:0    0   32G  0 disk
+└─sda1   8:1    0   32G  0 part /
+sdb      8:16   0   10G  0 disk
+sdc      8:32   0   10G  0 disk
+
+----------------------------
+2. fdisk -l (excerpt)
+----------------------------
+Disk /dev/sdb: 10 GiB, 10737418240 bytes, 20971520 sectors
+Disk label type: dos
+
+Disk /dev/sdc: 10 GiB, 10737418240 bytes, 20971520 sectors
+Disk label type: dos
+
+----------------------------
+3. lsblk /dev/sdb (after fdisk)
+----------------------------
+NAME   MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+sdb      8:16   0   10G  0 disk
+├─sdb1   8:17   0    2G  0 part
+└─sdb2   8:18   0    1G  0 part
+
+----------------------------
+4. lsblk /dev/sdc (after parted)
+----------------------------
+NAME   MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+sdc      8:32   0   10G  0 disk
+├─sdc1   8:33   0    1G  0 part
+└─sdc2   8:34   0    2G  0 part
+
+----------------------------
+5. blkid /dev/sdb1
+----------------------------
+/dev/sdb1: LABEL="DataDisk1" UUID="9a2b7d7f-4b12-4f02-9f38-9b15cb7d2d0d" TYPE="ext4"
+
+----------------------------
+6. blkid /dev/sdb2
+----------------------------
+/dev/sdb2: LABEL="DataDisk2" UUID="b3c4b5b0-8e6a-4d0c-8dcb-0a8d4c3b2b0a" TYPE="xfs"
+
+----------------------------
+7. blkid /dev/sdc1 /dev/sdc2
+----------------------------
+/dev/sdc1: LABEL="GPTDisk1" UUID="6f0f1c2d-1a7f-4ad2-8a23-1e2f6c5d9a10" TYPE="ext4"
+/dev/sdc2: LABEL="GPTDisk2" UUID="f0d4a1b2-2e9b-4e0b-a2f6-9a5b1c2d3e4f" TYPE="xfs"
+
+----------------------------
+8. df -h (after mounting)
+----------------------------
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/sda1        32G  4.1G   28G  13% /
+/dev/sdb1       2.0G  6.0M  1.9G   1% /mnt/disk1
+/dev/sdb2       1.0G   33M  0.98G  4% /mnt/disk2
+/dev/sdc1       985M  2.6M  916M   1% /mnt/gpt1
+/dev/sdc2       2.0G   33M  2.0G   2% /mnt/gpt2
+
+----------------------------
+9. mount | grep (sdb|sdc)
+----------------------------
+/dev/sdb1 on /mnt/disk1 type ext4 (rw,relatime,data=ordered)
+/dev/sdb2 on /mnt/disk2 type xfs (rw,relatime,attr2,inode64,noquota)
+/dev/sdc1 on /mnt/gpt1 type ext4 (rw,relatime,data=ordered)
+/dev/sdc2 on /mnt/gpt2 type xfs (rw,relatime,attr2,inode64,noquota)
+
+----------------------------
+10. Test File Content
+----------------------------
+This is an ext4 file system
+This is an xfs file system
+This is a GPT ext4 file system
+This is a GPT xfs file system
+
+----------------------------
+11. df -h (after unmount)
+----------------------------
+(no output for sdb/sdc entries)
+
+----------------------------
+12. mount -a (after fstab configuration)
+----------------------------
+(no output — successful mount)
+
+----------------------------
+13. lsblk -f
+----------------------------
+NAME   FSTYPE LABEL     UUID                                 MOUNTPOINT
+sda
+└─sda1 ext4             1b2c3d4e-5f6a-7b8c-9d0e-1f2a3b4c5d6e /
+sdb
+├─sdb1 ext4   DataDisk1 9a2b7d7f-4b12-4f02-9f38-9b15cb7d2d0d /mnt/disk1
+└─sdb2 xfs    DataDisk2 b3c4b5b0-8e6a-4d0c-8dcb-0a8d4c3b2b0a /mnt/disk2
+sdc
+├─sdc1 ext4   GPTDisk1  6f0f1c2d-1a7f-4ad2-8a23-1e2f6c5d9a10
+└─sdc2 xfs    GPTDisk2  f0d4a1b2-2e9b-4e0b-a2f6-9a5b1c2d3e4f
+
+----------------------------
+14. df -hT
+----------------------------
+Filesystem     Type  Size  Used Avail Use% Mounted on
+/dev/sda1      ext4   32G  4.1G   28G  13% /
+/dev/sdb1      ext4  2.0G  6.0M  1.9G   1% /mnt/disk1
+/dev/sdb2      xfs   1.0G   33M  0.98G  4% /mnt/disk2
+
+----------------------------
+15. /etc/fstab (tail)
+----------------------------
+# Lab 9 - Disk partitions
+UUID=9a2b7d7f-4b12-4f02-9f38-9b15cb7d2d0d /mnt/disk1 ext4 defaults 0 2
+UUID=b3c4b5b0-8e6a-4d0c-8dcb-0a8d4c3b2b0a /mnt/disk2 xfs defaults 0 2
+
+----------------------------
+16. fsck -n /dev/sdb1
+----------------------------
+/dev/sdb1: clean, 11/131072 files, 15507/524288 blocks
+
+----------------------------
+17. xfs_info /dev/sdb2
+----------------------------
+meta-data=/dev/sdb2 isize=256 agcount=4, agsize=65536 blks
+data = bsize=4096 blocks=262144, imaxpct=25
+log = internal bsize=4096 blocks=2560, version=2
+
+==========================================================
+Lab 29 Completed Successfully
+==========================================================
