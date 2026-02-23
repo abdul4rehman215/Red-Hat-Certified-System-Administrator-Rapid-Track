@@ -1,0 +1,99 @@
+toor@ip-172-31-10-266:~$ mkdir /tmp/shared_dir
+
+
+toor@ip-172-31-10-266:~$ chmod 777 /tmp/shared_dir
+
+
+toor@ip-172-31-10-266:~$ ls -ld /tmp/shared_dir
+drwxrwxrwx 2 toor toor 4096 Feb 23 15:10 /tmp/shared_dir
+
+
+toor@ip-172-31-10-266:~$ chmod +t /tmp/shared_dir
+
+
+toor@ip-172-31-10-266:~$ ls -ld /tmp/shared_dir
+drwxrwxrwt 2 toor toor 4096 Feb 23 15:10 /tmp/shared_dir
+
+
+toor@ip-172-31-10-266:~$ touch /tmp/shared_dir/user1_file
+
+
+toor@ip-172-31-10-266:~$ sudo -u nobody touch /tmp/shared_dir/nobody_file
+
+
+toor@ip-172-31-10-266:~$ sudo -u nobody rm /tmp/shared_dir/user1_file
+rm: cannot remove '/tmp/shared_dir/user1_file': Operation not permitted
+
+
+--------------------------------------------------
+Task 2: setuid Configuration
+--------------------------------------------------
+
+toor@ip-172-31-10-266:~$ sudo chmod +x /usr/local/bin/show_euid
+
+
+toor@ip-172-31-10-266:~$ sudo chmod u+s /usr/local/bin/show_euid
+
+
+toor@ip-172-31-10-266:~$ ls -l /usr/local/bin/show_euid
+-rwsr-xr-x 1 root root 45 Feb 23 15:15 /usr/local/bin/show_euid
+
+
+toor@ip-172-31-10-266:~$ sudo -u nobody /usr/local/bin/show_euid
+Effective UID: 0
+
+
+--------------------------------------------------
+Task 2: setgid Configuration
+--------------------------------------------------
+
+toor@ip-172-31-10-266:~$ sudo groupadd testgroup
+
+
+toor@ip-172-31-10-266:~$ sudo chown :testgroup /usr/local/bin/show_euid
+
+
+toor@ip-172-31-10-266:~$ sudo chmod g+s /usr/local/bin/show_euid
+
+
+toor@ip-172-31-10-266:~$ ls -l /usr/local/bin/show_euid
+-rwsr-sr-x 1 root testgroup 45 Feb 23 15:15 /usr/local/bin/show_euid
+
+
+--------------------------------------------------
+Verification
+--------------------------------------------------
+
+toor@ip-172-31-10-266:~$ sudo -u nobody rm /tmp/shared_dir/user1_file
+rm: cannot remove '/tmp/shared_dir/user1_file': Operation not permitted
+
+
+toor@ip-172-31-10-266:~$ sudo -u nobody /usr/local/bin/show_euid
+Effective UID: 0
+
+
+toor@ip-172-31-10-266:~$ mount | grep nosuid
+# (No output — filesystem allows setuid execution)
+
+
+toor@ip-172-31-10-266:~$ stat /usr/local/bin/show_euid
+  File: /usr/local/bin/show_euid
+  Size: 45         Blocks: 8          IO Block: 4096   regular file
+Device: 10301h/66305d    Inode: 262457      Links: 1
+Access: (4755/-rwsr-sr-x)  Uid: (    0/    root)   Gid: ( 1003/testgroup)
+Access: 2026-02-23 15:15:12.000000000 +0000
+Modify: 2026-02-23 15:15:00.000000000 +0000
+Change: 2026-02-23 15:16:01.000000000 +0000
+
+
+--------------------------------------------------
+Cleanup
+--------------------------------------------------
+
+toor@ip-172-31-10-266:~$ sudo rm /usr/local/bin/show_euid
+
+
+toor@ip-172-31-10-266:~$ sudo groupdel testgroup
+
+
+toor@ip-172-31-10-266:~$ sudo rm -r /tmp/shared_dir
