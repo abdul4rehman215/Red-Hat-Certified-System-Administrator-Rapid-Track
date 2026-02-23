@@ -1,0 +1,94 @@
+==============================================
+Lab 07: User and Group Management in Linux
+==============================================
+
+----------------------------------------------
+Task 1: Create New Users
+----------------------------------------------
+
+toor@ip-172-31-10-241:~$ sudo useradd labuser1
+[sudo] password for toor:
+(No output indicates success)
+
+toor@ip-172-31-10-241:~$ sudo useradd -m labuser2
+(No output)
+
+----------------------------------------------
+Verify User Creation
+----------------------------------------------
+
+toor@ip-172-31-10-241:~$ id labuser1
+uid=1001(labuser1) gid=1001(labuser1) groups=1001(labuser1)
+
+toor@ip-172-31-10-241:~$ id labuser2
+uid=1002(labuser2) gid=1002(labuser2) groups=1002(labuser2)
+
+----------------------------------------------
+Task 1: Create New Group
+----------------------------------------------
+
+toor@ip-172-31-10-241:~$ sudo groupadd developers
+(No output)
+
+toor@ip-172-31-10-241:~$ grep developers /etc/group
+developers:x:1003:
+
+----------------------------------------------
+Task 2: Modify User Information
+----------------------------------------------
+
+toor@ip-172-31-10-241:~$ sudo usermod -d /home/labuser1_new -m labuser1
+(No output)
+
+toor@ip-172-31-10-241:~$ ls /home
+labuser1_new  labuser2  toor
+
+----------------------------------------------
+Change Default Shell
+----------------------------------------------
+
+toor@ip-172-31-10-241:~$ sudo usermod -s /bin/bash labuser1
+(No output)
+
+toor@ip-172-31-10-241:~$ grep labuser1 /etc/passwd
+labuser1:x:1001:1001::/home/labuser1_new:/bin/bash
+
+----------------------------------------------
+Task 3: Assign Users to Group
+----------------------------------------------
+
+toor@ip-172-31-10-241:~$ sudo usermod -aG developers labuser1
+(No output)
+
+toor@ip-172-31-10-241:~$ sudo usermod -aG developers labuser2
+(No output)
+
+toor@ip-172-31-10-241:~$ groups labuser1
+labuser1 : labuser1 developers
+
+----------------------------------------------
+Remove User from Group
+----------------------------------------------
+
+toor@ip-172-31-10-241:~$ sudo gpasswd -d labuser1 developers
+Removing user labuser1 from group developers
+
+toor@ip-172-31-10-241:~$ groups labuser1
+labuser1 : labuser1
+
+----------------------------------------------
+Delete Users and Groups
+----------------------------------------------
+
+toor@ip-172-31-10-241:~$ sudo userdel -r labuser1
+userdel: labuser1 mail spool (/var/mail/labuser1) not found
+
+toor@ip-172-31-10-241:~$ sudo groupdel developers
+(No output)
+
+toor@ip-172-31-10-241:~$ grep developers /etc/group
+(No output)
+
+----------------------------------------------
+Lab 07 Completed Successfully
+----------------------------------------------
