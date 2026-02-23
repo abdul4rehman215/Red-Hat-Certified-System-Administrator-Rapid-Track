@@ -1,0 +1,159 @@
+========================================
+Lab 31: Controlling the Boot Process
+Full Command Outputs
+========================================
+
+# systemctl --version
+systemd 239
++PAM +AUDIT +SELINUX +IMA +APPARMOR +SMACK +SYSVINIT +UTMP +LIBCRYPTSETUP +GCRYPT +GNUTLS +ACL +XZ +LZ4 +SECCOMP +BLKID +ELFUTILS +KMOD +IDN2 -IDN +PCRE2 default-hierarchy=hybrid
+
+# systemctl status
+● ip-172-31-18-204
+   State: running
+    Jobs: 0 queued
+  Failed: 0 units
+   Since: Sun 2026-02-23 20:41:02 UTC; 12min ago
+  CGroup: /system.slice
+          ├─1 /usr/lib/systemd/systemd --switched-root --system --deserialize 22
+          ├─482 /usr/lib/systemd/systemd-journald
+          ├─520 /usr/sbin/sshd -D
+          ├─566 /usr/sbin/chronyd
+          └─701 /usr/lib/systemd/systemd-logind
+
+Feb 23 20:44:13 ip-172-31-18-204 sshd[520]: Server listening on 0.0.0.0 port 22.
+Feb 23 20:44:16 ip-172-31-18-204 systemd[1]: Started OpenSSH server daemon.
+
+# systemctl list-units --type=service --state=active
+chronyd.service
+crond.service
+dbus.service
+firewalld.service
+getty@tty1.service
+NetworkManager.service
+rsyslog.service
+sshd.service
+systemd-journald.service
+systemd-logind.service
+systemd-udevd.service
+
+# systemctl status sshd
+● sshd.service - OpenSSH server daemon
+   Loaded: loaded (/usr/lib/systemd/system/sshd.service; enabled)
+   Active: active (running)
+ Main PID: 520 (sshd)
+
+# systemctl get-default
+multi-user.target
+
+# systemctl status chronyd (after stop)
+● chronyd.service - NTP client/server
+   Active: inactive (dead)
+
+# systemctl status chronyd (after start)
+● chronyd.service - NTP client/server
+   Active: active (running)
+ Main PID: 1042 (chronyd)
+
+# systemctl disable chronyd
+Removed symlink /etc/systemd/system/multi-user.target.wants/chronyd.service.
+
+# systemctl enable chronyd
+Created symlink from /etc/systemd/system/multi-user.target.wants/chronyd.service to /usr/lib/systemd/system/chronyd.service.
+
+========================================
+GRUB Configuration
+========================================
+
+# cat /etc/default/grub
+GRUB_TIMEOUT=5
+GRUB_DEFAULT=saved
+GRUB_DISABLE_SUBMENU=true
+GRUB_TERMINAL_OUTPUT="console"
+GRUB_CMDLINE_LINUX="crashkernel=auto rhgb"
+GRUB_DISABLE_RECOVERY="true"
+
+# After modification
+GRUB_CMDLINE_LINUX="crashkernel=auto rd.lvm.lv=centos/root rd.lvm.lv=centos/swap rhgb quiet"
+
+# grub2-mkconfig
+Generating grub configuration file ...
+Found linux image: /boot/vmlinuz-4.18.0-...
+Found initrd image: /boot/initramfs-4.18.0-....img
+done
+
+========================================
+Rescue Mode Output
+========================================
+
+# systemctl list-units --type=target --state=active
+basic.target
+local-fs.target
+rescue.target
+sysinit.target
+
+# df -h
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/sda1        32G  4.5G   28G  14% /
+
+# journalctl -b (excerpt)
+Feb 23 21:12:03 systemd[1]: Starting Rescue Mode...
+Feb 23 21:12:03 systemd[1]: Reached target Rescue Mode.
+Feb 23 21:12:04 systemd[1]: Started Emergency Shell.
+
+========================================
+Simulated Boot Failure (Bad fstab)
+========================================
+
+# echo "/dev/nonexistent /mnt/fake ext4 defaults 0 2"
+On next boot:
+System entered emergency mode due to mount failure.
+
+========================================
+Fix Applied
+========================================
+
+# sed -i '/nonexistent/d' /etc/fstab
+
+# cat /etc/fstab
+UUID=1b2c3d4e-5f6a-7b8c-9d0e-1f2a3b4c5d6e / ext4 defaults 0 1
+
+========================================
+Emergency Mode Output
+========================================
+
+# systemctl list-units --type=target --state=active
+basic.target
+emergency.target
+sysinit.target
+
+# mount
+proc on /proc type proc
+sysfs on /sys type sysfs
+devtmpfs on /dev type devtmpfs
+tmpfs on /run type tmpfs
+
+========================================
+Password Reset Output
+========================================
+
+# passwd root
+passwd: all authentication tokens updated successfully.
+
+# passwd testuser
+passwd: all authentication tokens updated successfully.
+
+========================================
+Final Verification
+========================================
+
+# systemctl get-default
+graphical.target
+
+# journalctl -b | tail -15
+Reached target Network is Online.
+Reached target Graphical Interface.
+Started OpenSSH server daemon.
+
+========================================
+Lab 31 Completed Successfully
+========================================
