@@ -14,7 +14,7 @@ You will also practice **extending**, **shrinking**, and managing LVs, and explo
 ---
 
 ## 🧾 Objectives
-By the end of this lab, you will be able to:
+By the end of this lab, I was able to:
 
 - Understand LVM components (PV, VG, LV, PE)
 - Create physical volumes using `pvcreate`
