@@ -1,0 +1,264 @@
+========================================================
+Lab 21 - Introduction to the Bash Shell
+Full Execution Output Log
+CentOS/RHEL Cloud Lab Environment
+User: centos
+========================================================
+
+
+===============================
+Task 1: Environment Verification
+===============================
+
+-bash-4.2$ echo $SHELL
+/bin/bash
+
+-bash-4.2$ bash --version
+GNU bash, version 4.2.46(2)-release (x86_64-redhat-linux-gnu)
+Copyright (C) 2011 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+
+This is free software; you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+
+-bash-4.2$ whoami
+centos
+
+-bash-4.2$ date
+Mon Feb 23 13:55:12 UTC 2026
+
+
+===============================
+Task 2: Basic Bash Commands
+===============================
+
+-bash-4.2$ pwd
+/home/centos
+
+-bash-4.2$ ls
+
+-bash-4.2$ ls -l
+total 0
+
+-bash-4.2$ ls -la
+total 12
+drwx------. 2 centos centos  62 Feb 23 13:54 .
+drwxr-xr-x. 3 root  root    19 Feb 23 13:52 ..
+-rw-------. 1 centos centos  29 Feb 23 13:54 .bash_history
+-rw-r--r--. 1 centos centos  18 Apr  1  2020 .bash_logout
+-rw-r--r--. 1 centos centos 193 Apr  1  2020 .bash_profile
+-rw-r--r--. 1 centos centos 231 Apr  1  2020 .bashrc
+
+-bash-4.2$ cd /
+-bash-4.2$ ls
+bin   dev  home  lib64  mnt  proc  run   srv  tmp  var
+boot  etc  lib   media  opt  root  sbin  sys  usr
+
+-bash-4.2$ cd ~
+-bash-4.2$ pwd
+/home/centos
+
+
+===============================
+Directory Creation
+===============================
+
+-bash-4.2$ mkdir lab1-practice
+-bash-4.2$ cd lab1-practice
+-bash-4.2$ pwd
+/home/centos/lab1-practice
+
+-bash-4.2$ mkdir scripts documents backups
+-bash-4.2$ mkdir -p projects/web/html projects/web/css
+-bash-4.2$ ls -R
+.:
+backups  documents  projects  scripts
+
+./backups:
+
+./documents:
+
+./projects:
+web
+
+./projects/web:
+css  html
+
+./projects/web/css:
+
+./projects/web/html:
+
+./scripts:
+
+
+===============================
+File Creation & Management
+===============================
+
+-bash-4.2$ touch readme.txt
+
+-bash-4.2$ echo "Welcome to Bash Shell Lab" > welcome.txt
+
+-bash-4.2$ cat welcome.txt
+Welcome to Bash Shell Lab
+
+-bash-4.2$ cat system-info.txt
+System Information Lab File
+Created on: Mon Feb 23 13:57:03 UTC 2026
+User: centos
+Directory: /home/centos/lab1-practice
+
+
+===============================
+Copy, Move, Rename, Remove
+===============================
+
+-bash-4.2$ ls
+backups  documents  projects  scripts  system-info.txt  welcome.txt
+
+-bash-4.2$ ls documents/
+readme.txt  welcome.txt
+
+
+===============================
+Redirection & Piping
+===============================
+
+-bash-4.2$ cat file-listing.txt
+total 8
+drwxr-xr-x. 6 centos centos 142 Feb 23 13:57 .
+drwx------. 3 centos centos  82 Feb 23 13:55 ..
+drwxr-xr-x. 2 centos centos   6 Feb 23 13:56 backups
+drwxr-xr-x. 2 centos centos  40 Feb 23 13:57 documents
+-rw-r--r--. 1 centos centos   0 Feb 23 13:58 file-listing.txt
+drwxr-xr-x. 3 centos centos  17 Feb 23 13:56 projects
+drwxr-xr-x. 2 centos centos   6 Feb 23 13:56 scripts
+-rw-r--r--. 1 centos centos 109 Feb 23 13:57 system-info.txt
+-rw-r--r--. 1 centos centos  25 Feb 23 13:57 welcome.txt
+Mon Feb 23 13:58:44 UTC 2026
+--- End of listing ---
+
+-bash-4.2$ sort < numbers.txt
+10
+15
+25
+30
+5
+
+-bash-4.2$ ls | wc -l
+8
+
+-bash-4.2$ ps aux | grep bash
+root       1102  0.0  0.1 115496  2100 ?        Ss   13:52   0:00 /usr/sbin/sshd -D
+centos     1350  0.0  0.1 116828  2312 pts/0    Ss   13:55   0:00 -bash
+centos     1689  0.0  0.0 112712   976 pts/0    S+   13:59   0:00 grep --color=auto bash
+
+-bash-4.2$ du -h | sort -hr
+28K .
+8.0K ./documents
+8.0K ./projects/web
+8.0K ./projects
+4.0K ./scripts
+4.0K ./backups
+4.0K ./projects/web/html
+4.0K ./projects/web/css
+4.0K ./file-listing.txt
+4.0K ./sorted-numbers.txt
+4.0K ./numbers.txt
+4.0K ./system-info.txt
+4.0K ./welcome.txt
+
+-bash-4.2$ cat /etc/passwd | grep root
+root:x:0:0:root:/root:/bin/bash
+
+-bash-4.2$ ls -la | grep "^d" | wc -l
+6
+
+
+===============================
+Script Execution
+===============================
+
+-bash-4.2$ ./hello-world.sh
+Hello, World!
+Welcome to Bash scripting!
+Today is: Mon Feb 23 14:02:11 UTC 2026
+Current user: centos
+
+
+-bash-4.2$ ./system-report.sh
+==================================
+ SYSTEM INFORMATION REPORT
+==================================
+
+Date and Time: Mon Feb 23 14:03:06 UTC 2026
+Hostname: ip-172-31-18-204
+Current User: centos
+Current Directory: /home/centos/lab1-practice/scripts
+
+System Uptime:
+ 14:03:06 up 11 min,  1 user,  load average: 0.00, 0.01, 0.05
+
+Disk Usage:
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/nvme0n1p1   32G  4.0G   29G  13% /
+devtmpfs        1.8G     0  1.8G   0% /dev
+tmpfs           1.9G     0  1.9G   0% /dev/shm
+tmpfs           1.9G   17M  1.9G   1% /run
+
+Memory Usage:
+              total        used        free      shared  buff/cache   available
+Mem:           1.8G        164M        1.3G        8.2M        337M        1.4G
+Swap:            0B          0B          0B
+
+Number of files in current directory: 2
+==================================
+
+
+-bash-4.2$ ./user-info.sh
+Welcome to the User Information Collector!
+
+Enter your name: Ali
+Enter your favorite color: Blue
+Enter your age: 22
+
+==================================
+User Information Summary
+==================================
+Name: Ali
+Favorite Color: Blue
+Age: 22
+Script run on: Mon Feb 23 14:04:41 UTC 2026
+==================================
+Creating a personalized file for Ali...
+File Ali-info.txt has been created!
+
+
+-bash-4.2$ ./file-manager.sh
+File Management Utility
+======================
+Current files in directory:
+total 20
+drwxr-xr-x. 3 centos centos 128 Feb 23 14:06 .
+drwxr-xr-x. 6 centos centos 142 Feb 23 14:00 ..
+-rw-r--r--. 1 centos centos 110 Feb 23 14:04 Ali-info.txt
+drwxr-xr-x. 2 centos centos   6 Feb 23 14:06 backup-20260223
+-rwxr-xr-x. 1 centos centos 160 Feb 23 14:02 hello-world.sh
+-rwxr-xr-x. 1 centos centos 632 Feb 23 14:05 file-manager.sh
+-rwxr-xr-x. 1 centos centos 520 Feb 23 14:03 system-report.sh
+-rwxr-xr-x. 1 centos centos 831 Feb 23 14:04 user-info.sh
+
+Creating backup of .txt files...
+Backed up: Ali-info.txt
+
+Backup completed in directory: backup-20260223
+Contents of backup directory:
+total 8
+drwxr-xr-x. 2 centos centos  24 Feb 23 14:06 .
+drwxr-xr-x. 3 centos centos 128 Feb 23 14:06 ..
+-rw-r--r--. 1 centos centos 110 Feb 23 14:06 Ali-info.txt
+
+
+========================================================
+End of Lab 21 Output Log
+========================================================
