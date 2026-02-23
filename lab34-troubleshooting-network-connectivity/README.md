@@ -39,10 +39,7 @@ lab34-troubleshooting-network-connectivity/
 ├── output.txt
 ├── interview_qna.md
 ├── troubleshooting.md
-├── scripts/
-│   └── (none required for this lab)
-└── notes/
-    └── (optional future: diagrams or reference cheatsheets)
+
 ````
 
 ✅ Notes:
