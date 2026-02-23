@@ -1,0 +1,208 @@
+Lab 32 - Automating Tasks with Cron and systemd Timers
+Environment: CentOS/RHEL 8/9
+User: centos
+
+========================================
+CRON SERVICE STATUS
+========================================
+
+● crond.service - Command Scheduler
+   Loaded: loaded (/usr/lib/systemd/system/crond.service; enabled; vendor preset: enabled)
+   Active: active (running) since Sat 2026-02-24 10:12:41 UTC; 18min ago
+ Main PID: 742 (crond)
+    Tasks: 1 (limit: 4670)
+   Memory: 1.8M
+   CGroup: /system.slice/crond.service
+           └─742 /usr/sbin/crond -n
+
+Feb 24 10:12:41 ip-172-31-22-194 systemd[1]: Started Command Scheduler.
+Feb 24 10:12:41 ip-172-31-22-194 crond[742]: (CRON) INFO (RANDOM_DELAY will be scaled with factor 22% if used.)
+Feb 24 10:12:41 ip-172-31-22-194 crond[742]: (CRON) INFO (running with inotify support)
+
+----------------------------------------
+
+Created symlink /etc/systemd/system/multi-user.target.wants/crond.service → /usr/lib/systemd/system/crond.service.
+
+----------------------------------------
+
+no crontab for centos
+
+----------------------------------------
+
+-rw-------. 1 root root  541 Aug  9  2025 /etc/crontab
+
+drwxr-xr-x. 2 root root 4096 Aug  9  2025 /etc/cron.d
+drwxr-xr-x. 2 root root 4096 Aug  9  2025 /etc/cron.daily
+drwxr-xr-x. 2 root root 4096 Aug  9  2025 /etc/cron.hourly
+drwxr-xr-x. 2 root root 4096 Aug  9  2025 /etc/cron.monthly
+drwxr-xr-x. 2 root root 4096 Aug  9  2025 /etc/cron.weekly
+
+/etc/cron.d:
+total 12
+drwxr-xr-x. 2 root root 4096 Aug  9  2025 .
+drwxr-xr-x. 83 root root 8192 Feb 24 10:10 ..
+-rw-r--r--. 1 root root 128 Aug  9  2025 0hourly
+
+----------------------------------------
+
+SHELL=/bin/bash
+PATH=/sbin:/bin:/usr/sbin:/usr/bin
+MAILTO=root
+
+# .---------------- minute (0 - 59)
+# |  .------------- hour (0 - 23)
+# |  |  .---------- day of month (1 - 31)
+# |  |  |  .------- month (1 - 12)
+# |  |  |  |  .---- day of week (0 - 6)
+# *  *  *  *  * user-name  command to be executed
+
+========================================
+SYSTEM INFO SCRIPT OUTPUT
+========================================
+
+=== System Information Report ===
+Date: Sat Feb 24 10:33:12 UTC 2026
+Uptime:  10:33:12 up  1:02,  1 user,  load average: 0.00, 0.01, 0.04
+Disk Usage:
+Filesystem      Size  Used Avail Use% Mounted on
+devtmpfs        1.8G     0  1.8G   0% /dev
+tmpfs           1.9G     0  1.9G   0% /dev/shm
+tmpfs           1.9G   17M  1.9G   1% /run
+tmpfs           1.9G     0  1.9G   0% /sys/fs/cgroup
+/dev/nvme0n1p1   32G  4.1G   28G  13% /
+tmpfs           373M     0  373M   0% /run/user/1000
+Memory Usage:
+              total        used        free      shared  buff/cache   available
+Mem:          3.7Gi       312Mi       2.8Gi        17Mi       592Mi       3.2Gi
+Swap:         0B          0B          0B
+=================================
+
+----------------------------------------
+
+*/5 * * * * /home/$(whoami)/scripts/system_info.sh
+
+----------------------------------------
+
+# System info every 5 minutes
+*/5 * * * * /home/$(whoami)/scripts/system_info.sh
+
+# Daily backup at 2:30 AM
+30 2 * * * /home/$(whoami)/scripts/daily_backup.sh
+
+# Weekly cleanup on Sundays at 3:00 AM
+0 3 * * 0 find /tmp -name "*.tmp" -mtime +7 -delete
+
+# Log monitor every 10 minutes
+*/10 * * * * /home/$(whoami)/scripts/log_monitor.sh
+
+========================================
+SYSTEMD TIMERS - INITIAL LIST
+========================================
+
+NEXT                         LEFT          LAST                         PASSED       UNIT                         ACTIVATES
+Sat 2026-02-24 10:45:00 UTC  7min left     Sat 2026-02-24 10:30:02 UTC  7min ago     dnf-makecache.timer          dnf-makecache.service
+Sat 2026-02-24 11:00:00 UTC  22min left    Sat 2026-02-24 10:00:00 UTC  37min ago    logrotate.timer              logrotate.service
+Sat 2026-02-24 11:12:00 UTC  34min left    Sat 2026-02-24 10:12:00 UTC  25min ago    systemd-tmpfiles-clean.timer systemd-tmpfiles-clean.service
+
+3 timers listed.
+
+----------------------------------------
+
+ls: cannot access '/etc/systemd/system/*.timer': No such file or directory
+
+----------------------------------------
+
+-rw-r--r--. 1 root root  410 Oct  2  2025 /usr/lib/systemd/system/dnf-makecache.timer
+-rw-r--r--. 1 root root  543 Oct  2  2025 /usr/lib/systemd/system/logrotate.timer
+-rw-r--r--. 1 root root  393 Oct  2  2025 /usr/lib/systemd/system/systemd-tmpfiles-clean.timer
+
+========================================
+SYSTEM-STATUS TIMER ENABLED
+========================================
+
+Created symlink from /etc/systemd/system/timers.target.wants/system-status.timer to /etc/systemd/system/system-status.timer.
+
+----------------------------------------
+
+● system-status.timer - Run system-status.service every 15 minutes
+   Loaded: loaded (/etc/systemd/system/system-status.timer; enabled; vendor preset: disabled)
+   Active: active (waiting) since Sat 2026-02-24 10:40:18 UTC; 6s ago
+  Trigger: Sat 2026-02-24 10:45:00 UTC; 4min 36s left
+
+Feb 24 10:40:18 ip-172-31-22-194 systemd[1]: Started Run system-status.service every 15 minutes.
+
+----------------------------------------
+
+NEXT                         LEFT          LAST  PASSED  UNIT                ACTIVATES
+Sat 2026-02-24 10:45:00 UTC  3min left     n/a   n/a     system-status.timer  system-status.service
+
+========================================
+USER TIMER ENABLED
+========================================
+
+Created symlink /home/centos/.config/systemd/user/timers.target.wants/personal-backup.timer → /home/centos/.config/systemd/user/personal-backup.timer.
+
+----------------------------------------
+
+NEXT                         LEFT          LAST  PASSED  UNIT                   ACTIVATES
+Sun 2026-02-25 00:00:00 UTC  13h left      n/a   n/a     personal-backup.timer   personal-backup.service
+
+1 timers listed.
+
+========================================
+CRON LOG MONITORING
+========================================
+
+Feb 24 10:45:01 ip-172-31-22-194 CROND[1183]: (centos) CMD (/home/centos/scripts/system_info.sh)
+Feb 24 10:50:01 ip-172-31-22-194 CROND[1244]: (centos) CMD (/home/centos/scripts/log_monitor.sh)
+Feb 24 10:50:01 ip-172-31-22-194 CROND[1245]: (centos) CMD (/home/centos/scripts/system_info.sh)
+
+----------------------------------------
+
+Feb 24 10:55:01 ip-172-31-22-194 CROND[1301]: (centos) CMD (/home/centos/scripts/system_info.sh)
+Feb 24 11:00:01 ip-172-31-22-194 CROND[1367]: (centos) CMD (/home/centos/scripts/system_info.sh)
+Feb 24 11:00:01 ip-172-31-22-194 CROND[1368]: (centos) CMD (/home/centos/scripts/log_monitor.sh)
+
+========================================
+ENVIRONMENT TEST OUTPUT
+========================================
+
+=== Environment Test - Sat Feb 24 11:12:01 UTC 2026 ===
+PATH: /usr/bin:/bin
+HOME: /home/centos
+USER: centos
+PWD: /home/centos
+Shell: /bin/bash
+=== End Environment Test ===
+
+========================================
+SYSTEM STATUS SERVICE LOG
+========================================
+
+=== System Status Report - Sat Feb 24 11:18:02 UTC 2026 ===
+Hostname: ip-172-31-22-194
+Kernel: 5.14.0-427.el9.x86_64
+Load Average: 0.00 0.01 0.05 1/184 1601
+Memory Info:
+              total        used        free      shared  buff/cache   available
+Mem:          3.7Gi       355Mi       2.7Gi        18Mi       650Mi       3.1Gi
+Top 5 Processes by CPU:
+root       1601  0.0  0.1  123456  3456 ?        Ss   11:18   0:00 /usr/sbin/crond
+=================================
+
+========================================
+AUTOMATION REPORT OUTPUT
+========================================
+
+=== Automation Status Report - Sat Feb 24 11:25:12 UTC 2026 ===
+--- Cron Jobs Status ---
+Active crontab entries:
+4
+--- systemd Timers Status ---
+Active timers:
+6
+--- Log File Sizes ---
+-rw-rw-r-- 1 centos centos 6.2K Feb 24 11:24 /home/centos/system_reports.log
+-rw-rw-r-- 1 centos centos 1.4K Feb 24 11:24 /home/centos/cron_monitor.log
+-rw-rw-r-- 1 centos centos  312 Feb 24 02:30 /home/centos/backup.log
+=== End Automation Report ===
