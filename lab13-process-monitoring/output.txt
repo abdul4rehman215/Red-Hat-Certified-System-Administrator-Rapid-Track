@@ -1,0 +1,162 @@
+🧪 Lab 13: Process Monitoring
+Host: ip-172-31-10-278
+User: toor
+OS: Ubuntu 24.04.1 LTS
+CPU: 2 vCPUs
+RAM: ~4GB
+
+--------------------------------------------------
+Installing htop
+--------------------------------------------------
+
+toor@ip-172-31-10-278:~$ sudo apt update && sudo apt install htop -y
+
+Get:1 http://archive.ubuntu.com noble InRelease
+Get:2 http://archive.ubuntu.com noble-updates InRelease
+Fetched 4,210 kB in 2s (2,105 kB/s)
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+The following NEW packages will be installed:
+  htop
+0 upgraded, 1 newly installed, 0 to remove
+Need to get 152 kB of archives.
+After this operation, 397 kB of additional disk space will be used.
+Selecting previously unselected package htop.
+Setting up htop (3.2.2-1) ...
+Processing triggers for man-db ...
+✔ htop installed successfully.
+
+--------------------------------------------------
+Using top
+--------------------------------------------------
+
+toor@ip-172-31-10-278:~$ top
+
+top - 16:40:21 up 1:12,  1 user,  load average: 0.72, 0.64, 0.50
+Tasks: 112 total,   1 running, 111 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 12.5 us,  3.1 sy,  0.0 ni, 84.0 id,  0.4 wa
+MiB Mem :   3900.0 total,   1800.2 free,   1100.5 used,   999.3 buff/cache
+
+  PID USER      PR  NI    VIRT    RES  %CPU %MEM COMMAND
+ 2143 toor      20   0   18500   3500  45.3  0.1 python3
+ 1320 root      20   0  210000  15200   5.0  0.4 dockerd
+  845 root      20   0  165000   9800   2.5  0.3 systemd
+
+(Exited using q)
+
+--------------------------------------------------
+Using ps aux
+--------------------------------------------------
+
+toor@ip-172-31-10-278:~$ ps aux | head
+
+USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+root         1  0.0  0.2 167500  9800 ?        Ss   15:28   0:01 /sbin/init
+root       845  0.1  0.3 165000 15200 ?        Ssl  15:28   0:03 /lib/systemd
+toor      2143 45.1  0.1  18500  3500 pts/0    R+   16:39   0:12 python3
+root      1320  5.0  0.4 210000 15200 ?        Ssl  15:29   0:04 dockerd
+
+--------------------------------------------------
+Using htop
+--------------------------------------------------
+
+toor@ip-172-31-10-278:~$ htop
+
+CPU[||||||||||||||                    45%]
+Mem[|||||||||||                       28%]
+Swap[                                 0%]
+
+  PID USER   PRI  NI  VIRT   RES  CPU% MEM% Command
+ 2143 toor    20   0 18500  3500  46.2  0.1 python3
+
+Used:
+F6 → Sort by CPU
+F5 → Tree view
+F10 → Exit
+
+--------------------------------------------------
+Sort by CPU Usage
+--------------------------------------------------
+
+toor@ip-172-31-10-278:~$ ps aux --sort=-%cpu | head -n 5
+
+USER   PID  %CPU %MEM COMMAND
+toor  2143  46.8  0.1 python3
+root  1320   5.2  0.4 dockerd
+root   845   2.3  0.3 systemd
+
+--------------------------------------------------
+Sort by Memory Usage
+--------------------------------------------------
+
+toor@ip-172-31-10-278:~$ ps aux --sort=-%mem | head -n 5
+
+USER   PID  %CPU %MEM COMMAND
+root  1320   5.2  0.4 dockerd
+root   845   2.3  0.3 systemd
+toor  2143  45.0  0.1 python3
+
+--------------------------------------------------
+Check Load Average
+--------------------------------------------------
+
+toor@ip-172-31-10-278:~$ uptime
+
+16:45:10 up 1:18,  1 user,  load average: 0.88, 0.72, 0.55
+
+✔ Load below CPU core count (2 cores → acceptable)
+
+--------------------------------------------------
+Kill High CPU Process
+--------------------------------------------------
+
+toor@ip-172-31-10-278:~$ kill 2143
+
+toor@ip-172-31-10-278:~$ ps aux | grep python3
+
+toor     2201  0.0  0.0  12300  1024 pts/0  S+  16:46   0:00 grep --color=auto python3
+
+✔ python3 process terminated successfully.
+
+--------------------------------------------------
+Simulate High CPU Load
+--------------------------------------------------
+
+toor@ip-172-31-10-278:~$ yes > /dev/null &
+[1] 2234
+
+toor@ip-172-31-10-278:~$ ps aux | grep yes
+
+toor 2234 99.5 0.0 12300 1024 pts/0 R 16:47 0:02 yes
+toor 2238 0.0  0.0  12300 1024 pts/0 S+ 16:47 0:00 grep yes
+
+--------------------------------------------------
+Renice Process
+--------------------------------------------------
+
+toor@ip-172-31-10-278:~$ sudo renice -n 10 -p 2234
+
+2234 (process ID) old priority 0, new priority 10
+
+✔ Process priority reduced.
+
+--------------------------------------------------
+Stop Test Process
+--------------------------------------------------
+
+toor@ip-172-31-10-278:~$ kill 2234
+
+[1]+  Terminated              yes > /dev/null
+
+--------------------------------------------------
+Final Confirmation
+--------------------------------------------------
+
+toor@ip-172-31-10-278:~$ echo "Lab 13 - Process Monitoring completed successfully!"
+
+Lab 13 - Process Monitoring completed successfully!
+
+--------------------------------------------------
+Lab Completed Successfully
+--------------------------------------------------
