@@ -1,0 +1,23 @@
+Physical volume "/dev/sdc" successfully created.
+
+Volume group "vg01" successfully created
+
+Logical volume "lv01" created.
+
+Filesystem UUID: a7d4f3a1-3c6d-4c9b-9a33-3f1a6c7d2211
+
+/dev/mapper/vg01-lv01  4.9G  24M  4.6G   1% /mnt/lv01
+
+Size of logical volume vg01/lv01 changed from 5.00 GiB to 7.00 GiB.
+
+The filesystem is now 7.00 GiB.
+
+/dev/mapper/vg01-lv01  6.9G  30M  6.6G   1% /mnt/lv01
+
+Size of logical volume vg01/lv01 changed from 7.00 GiB to 4.00 GiB.
+
+/dev/mapper/vg01-lv01  3.9G  20M  3.6G   1% /mnt/lv01
+
+Logical volume "lv01_snap" created.
+
+/dev/mapper/vg01-lv01_snap  3.9G  20M  3.6G  1% /mnt/snap
