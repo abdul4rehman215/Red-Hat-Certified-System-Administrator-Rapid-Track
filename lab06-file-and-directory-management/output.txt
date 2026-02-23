@@ -1,0 +1,151 @@
+==============================================
+Lab 06: File and Directory Management
+==============================================
+
+----------------------------------------------
+Setup: Verify Current Working Directory
+----------------------------------------------
+
+toor@ip-172-31-10-229:~$ pwd
+/home/toor
+
+toor@ip-172-31-10-229:~$ mkdir file_management_lab
+
+toor@ip-172-31-10-229:~$ cd file_management_lab
+
+toor@ip-172-31-10-229:~/file_management_lab$ pwd
+/home/toor/file_management_lab
+
+----------------------------------------------
+Task 1: Creating Files and Directories
+----------------------------------------------
+
+toor@ip-172-31-10-229:~/file_management_lab$ mkdir documents
+
+toor@ip-172-31-10-229:~/file_management_lab$ touch file1.txt file2.txt file3.txt
+
+toor@ip-172-31-10-229:~/file_management_lab$ ls -l
+total 0
+drwxr-xr-x 2 toor toor 4096 Feb 23 14:02 documents
+-rw-r--r-- 1 toor toor    0 Feb 23 14:02 file1.txt
+-rw-r--r-- 1 toor toor    0 Feb 23 14:02 file2.txt
+-rw-r--r-- 1 toor toor    0 Feb 23 14:02 file3.txt
+
+----------------------------------------------
+Task 1: Deleting Files and Directories
+----------------------------------------------
+
+toor@ip-172-31-10-229:~/file_management_lab$ rm file3.txt
+
+toor@ip-172-31-10-229:~/file_management_lab$ rmdir documents
+rmdir: failed to remove 'documents': Directory not empty
+
+toor@ip-172-31-10-229:~/file_management_lab$ rm -r documents
+
+----------------------------------------------
+Task 2: Move and Copy Files
+----------------------------------------------
+
+toor@ip-172-31-10-229:~/file_management_lab$ mkdir documents backups
+
+toor@ip-172-31-10-229:~/file_management_lab$ touch file1.txt file2.txt
+
+toor@ip-172-31-10-229:~/file_management_lab$ mv file1.txt documents/
+
+toor@ip-172-31-10-229:~/file_management_lab$ ls documents/
+file1.txt
+
+toor@ip-172-31-10-229:~/file_management_lab$ cp file2.txt backups/
+
+toor@ip-172-31-10-229:~/file_management_lab$ cp file2.txt file2_backup.txt
+
+toor@ip-172-31-10-229:~/file_management_lab$ ls backups/
+file2.txt
+
+toor@ip-172-31-10-229:~/file_management_lab$ ls
+backups  documents  file2.txt  file2_backup.txt
+
+----------------------------------------------
+Task 3: Relative Path Navigation
+----------------------------------------------
+
+toor@ip-172-31-10-229:~/file_management_lab$ cd documents
+
+toor@ip-172-31-10-229:~/file_management_lab/documents$ pwd
+/home/toor/file_management_lab/documents
+
+toor@ip-172-31-10-229:~/file_management_lab/documents$ cd ..
+
+toor@ip-172-31-10-229:~/file_management_lab$ ls backups/
+file2.txt
+
+----------------------------------------------
+Task 3: Absolute Path Operations
+----------------------------------------------
+
+toor@ip-172-31-10-229:~/file_management_lab$ pwd
+/home/toor/file_management_lab
+
+toor@ip-172-31-10-229:~/file_management_lab$ touch /home/toor/file_management_lab/absolute_example.txt
+
+toor@ip-172-31-10-229:~/file_management_lab$ cp /home/toor/file_management_lab/absolute_example.txt \
+> /home/toor/file_management_lab/backups/
+
+----------------------------------------------
+Advanced Exercise
+----------------------------------------------
+
+toor@ip-172-31-10-229:~/file_management_lab$ mkdir -p projects/{src,doc,bin}
+
+toor@ip-172-31-10-229:~/file_management_lab$ mv *.txt projects/doc/
+
+toor@ip-172-31-10-229:~/file_management_lab$ sudo apt install tree -y
+Reading package lists... Done
+Building dependency tree... Done
+The following NEW packages will be installed:
+  tree
+0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+Setting up tree (2.1.0-1) ...
+
+toor@ip-172-31-10-229:~/file_management_lab$ tree
+.
+├── backups
+│   ├── absolute_example.txt
+│   └── file2.txt
+├── documents
+├── projects
+│   ├── bin
+│   ├── doc
+│   │   ├── absolute_example.txt
+│   │   ├── file2.txt
+│   │   └── file2_backup.txt
+│   └── src
+
+7 directories, 5 files
+
+----------------------------------------------
+Final Verification
+----------------------------------------------
+
+toor@ip-172-31-10-229:~/file_management_lab$ find . -type d -print
+.
+./backups
+./documents
+./projects
+./projects/src
+./projects/doc
+./projects/bin
+
+----------------------------------------------
+Cleanup
+----------------------------------------------
+
+toor@ip-172-31-10-229:~/file_management_lab$ cd ..
+
+toor@ip-172-31-10-229:~$ rm -rf file_management_lab
+
+Lab directory removed successfully.
+
+----------------------------------------------
+Lab 06 Completed Successfully
+----------------------------------------------
