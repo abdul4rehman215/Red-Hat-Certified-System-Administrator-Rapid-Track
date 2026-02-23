@@ -1,0 +1,4 @@
+Name: Student
+Course: Red Hat System Administration
+Lab: File System Navigation
+Date: Mon Feb 23 14:13:41 UTC 2026
