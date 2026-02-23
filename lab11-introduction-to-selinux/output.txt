@@ -1,0 +1,127 @@
+--------------------------------------------------
+Task 1: Verify SELinux Installation
+--------------------------------------------------
+
+-bash-4.2$ rpm -qa | grep selinux
+libselinux-3.5-1.el9.x86_64
+libselinux-utils-3.5-1.el9.x86_64
+selinux-policy-38.1.23-1.el9.noarch
+selinux-policy-targeted-38.1.23-1.el9.noarch
+
+
+-bash-4.2$ sestatus
+SELinux status:                 enabled
+SELinuxfs mount:                /sys/fs/selinux
+SELinux root directory:         /etc/selinux
+Loaded policy name:             targeted
+Current mode:                   enforcing
+Mode from config file:          enforcing
+Policy MLS status:              enabled
+Policy deny_unknown status:     allowed
+Max kernel policy version:      33
+
+
+--------------------------------------------------
+Task 2: Understand SELinux Modes
+--------------------------------------------------
+
+-bash-4.2$ getenforce
+Enforcing
+
+
+-bash-4.2$ sudo setenforce 0
+(No output)
+
+
+-bash-4.2$ getenforce
+Permissive
+
+
+-bash-4.2$ sudo setenforce 1
+(No output)
+
+
+-bash-4.2$ getenforce
+Enforcing
+
+
+--------------------------------------------------
+Permanent Configuration
+--------------------------------------------------
+
+-bash-4.2$ sudo vi /etc/selinux/config
+# Edited:
+# SELINUX=enforcing
+# SELINUXTYPE=targeted
+
+
+-bash-4.2$ sudo reboot
+Connection closed by remote host.
+Connection to rhel9-selinux-lab closed.
+
+
+(Reconnected after reboot)
+
+
+-bash-4.2$ sestatus
+SELinux status:                 enabled
+Current mode:                   enforcing
+Mode from config file:          enforcing
+
+
+--------------------------------------------------
+Task 3: Check and Modify Contexts
+--------------------------------------------------
+
+-bash-4.2$ ls -Z /etc/passwd
+system_u:object_r:passwd_file_t:s0 /etc/passwd
+
+
+-bash-4.2$ sudo mkdir -p /var/www/html
+(No output)
+
+
+-bash-4.2$ sudo touch /var/www/html/testfile.html
+(No output)
+
+
+-bash-4.2$ ls -Z /var/www/html/testfile.html
+unconfined_u:object_r:default_t:s0 /var/www/html/testfile.html
+
+
+-bash-4.2$ sudo chcon -t httpd_sys_content_t /var/www/html/testfile.html
+(No output)
+
+
+-bash-4.2$ ls -Z /var/www/html/testfile.html
+unconfined_u:object_r:httpd_sys_content_t:s0 /var/www/html/testfile.html
+
+
+-bash-4.2$ sudo restorecon -v /var/www/html/testfile.html
+restorecon reset /var/www/html/testfile.html context \
+unconfined_u:object_r:httpd_sys_content_t:s0->unconfined_u:object_r:default_t:s0
+
+
+--------------------------------------------------
+Troubleshooting SELinux
+--------------------------------------------------
+
+-bash-4.2$ sudo ausearch -m avc -ts recent
+
+type=AVC msg=audit(1708700000.123:125): avc:  denied  { read } \
+for  pid=1234 comm="httpd" \
+name="testfile.html" \
+dev="dm-0" ino=262457 \
+scontext=system_u:system_r:httpd_t:s0 \
+tcontext=unconfined_u:object_r:default_t:s0 tclass=file permissive=0
+
+
+-bash-4.2$ sudo ausearch -m avc -ts recent | audit2allow -M mypolicy
+******************** IMPORTANT ***********************
+To make this policy package active, execute:
+
+semodule -i mypolicy.pp
+
+
+-bash-4.2$ sudo semodule -i mypolicy.pp
+(No output indicates successful installation)
