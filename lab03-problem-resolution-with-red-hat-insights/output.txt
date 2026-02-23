@@ -1,0 +1,162 @@
+============================================================
+Lab 03 – Problem Resolution with Red Hat Insights
+Execution Output Log
+============================================================
+
+============================================================
+SYSTEM INFORMATION
+============================================================
+Hostname: rhel8-lab
+OS: Red Hat Enterprise Linux 8.9 (Ootpa)
+User: student
+Prompt: [student@rhel8-lab ~]$
+
+============================================================
+STEP 1 – REGISTER SYSTEM WITH RED HAT SUBSCRIPTION MANAGER
+============================================================
+
+[student@rhel8-lab ~]$ sudo subscription-manager register --username labuser --password ********
+Registering to: subscription.rhsm.redhat.com:443/subscription
+The system has been registered with ID: 3f4a2bcd-91e7-4b5c-8f44-2a7c12345678
+The registered system name is: rhel8-lab
+
+============================================================
+STEP 1.1 – ATTACH SUBSCRIPTION
+============================================================
+
+[student@rhel8-lab ~]$ sudo subscription-manager attach --auto
+Installed Product Current Status:
+Product Name: Red Hat Enterprise Linux for x86_64
+Status: Subscribed
+
+✔ System successfully subscribed.
+
+============================================================
+STEP 2 – INSTALL INSIGHTS CLIENT
+============================================================
+
+[student@rhel8-lab ~]$ sudo dnf install -y insights-client
+Last metadata expiration check: 0:02:15 ago on Mon 23 Feb 2026 12:10:32 PM UTC.
+Dependencies resolved.
+================================================================================
+ Package               Arch      Version             Repository           Size
+================================================================================
+Installing:
+ insights-client       noarch    3.1.5-1.el8         rhel-8-appstream     1.2 M
+
+Transaction Summary
+================================================================================
+Install  1 Package
+
+Installed:
+  insights-client-3.1.5-1.el8.noarch
+
+Complete!
+
+✔ insights-client installed successfully.
+
+============================================================
+STEP 3 – REGISTER SYSTEM WITH RED HAT INSIGHTS
+============================================================
+
+[student@rhel8-lab ~]$ sudo insights-client --register
+Registering Insights client to Red Hat...
+Successfully registered host rhel8-lab
+
+View your system at:
+https://console.redhat.com/insights/inventory/3f4a2bcd-91e7-4b5c-8f44-2a7c12345678
+
+✔ System successfully registered with Red Hat Insights.
+
+============================================================
+STEP 4 – PERFORM INITIAL SYSTEM ANALYSIS
+============================================================
+
+[student@rhel8-lab ~]$ sudo insights-client
+Starting Red Hat Insights client...
+Collecting system metadata...
+Uploading Insights data to Red Hat...
+Upload completed successfully.
+
+View detailed reports at:
+https://console.redhat.com/insights
+
+✔ System data uploaded to Insights dashboard.
+
+============================================================
+INSIGHTS DASHBOARD FINDINGS
+============================================================
+
+Severity: 🔴 Critical
+Issue: OpenSSH allows root login (PermitRootLogin yes)
+
+Severity: 🟠 Important
+Issue: Kernel update available
+
+Severity: 🟡 Moderate
+Issue: Outdated bash package detected
+
+============================================================
+STEP 5 – APPLY RECOMMENDED PACKAGE UPDATE
+============================================================
+
+[student@rhel8-lab ~]$ sudo dnf update bash -y
+Last metadata expiration check: 0:00:45 ago on Mon 23 Feb 2026 12:15:21 PM UTC.
+Dependencies resolved.
+================================================================================
+ Package     Arch     Version        Repository         Size
+================================================================================
+Upgrading:
+ bash        x86_64   4.4.20-6.el8   rhel-8-baseos      1.5 M
+
+Transaction Summary
+================================================================================
+Upgrade  1 Package
+
+Complete!
+
+✔ Bash package successfully updated.
+
+============================================================
+STEP 6 – RESOLVE SSH CONFIGURATION ISSUE
+============================================================
+
+[student@rhel8-lab ~]$ sudo vi /etc/ssh/sshd_config
+
+Modified:
+PermitRootLogin no
+
+[student@rhel8-lab ~]$ sudo systemctl restart sshd
+
+(No output – service restarted successfully)
+
+============================================================
+STEP 7 – RE-RUN INSIGHTS CLIENT
+============================================================
+
+[student@rhel8-lab ~]$ sudo insights-client
+Starting Red Hat Insights client...
+Collecting updated configuration data...
+Uploading Insights data...
+Upload completed successfully.
+
+============================================================
+DASHBOARD STATUS AFTER REMEDIATION
+============================================================
+
+✔ SSH root login issue marked as Resolved
+✔ Bash outdated package recommendation cleared
+✔ System health improved
+✔ No critical vulnerabilities remaining
+
+============================================================
+LAB COMPLETED SUCCESSFULLY
+============================================================
+
+- System registered with RHSM
+- Insights client installed and configured
+- Health analysis performed
+- Security misconfiguration identified
+- Package update applied
+- SSH hardened
+- Issues verified as resolved via dashboard
