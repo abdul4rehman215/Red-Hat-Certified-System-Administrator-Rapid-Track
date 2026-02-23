@@ -1,0 +1,9 @@
+#!/bin/bash
+
+# ============================================
+# Script: show_euid
+# Purpose: Display Effective User ID
+# Used to demonstrate setuid behavior
+# ============================================
+
+echo "Effective UID: $EUID"
