@@ -1,0 +1,184 @@
+==============================================
+Lab 05: Linux File System Hierarchy
+==============================================
+
+----------------------------------------------
+Task 1: Exploring Root Directory
+----------------------------------------------
+
+toor@ip-172-31-10-214:~$ ls /
+bin   boot  dev  etc  home  lib  lib64  media  mnt  opt  proc
+root  run   sbin srv  sys   tmp  usr    var
+
+----------------------------------------------
+Exploring /bin
+----------------------------------------------
+
+toor@ip-172-31-10-214:~$ ls /bin | head
+bash
+cat
+chmod
+cp
+date
+echo
+grep
+ls
+mkdir
+mv
+
+----------------------------------------------
+Exploring /sbin
+----------------------------------------------
+
+toor@ip-172-31-10-214:~$ ls /sbin | head
+adduser
+fsck
+halt
+ifconfig
+iptables
+reboot
+shutdown
+sysctl
+
+----------------------------------------------
+Exploring /etc
+----------------------------------------------
+
+toor@ip-172-31-10-214:~$ ls /etc | head
+adduser.conf
+apt
+bash.bashrc
+cron.d
+environment
+fstab
+group
+hosts
+passwd
+shadow
+
+----------------------------------------------
+Viewing /etc/passwd
+----------------------------------------------
+
+toor@ip-172-31-10-214:~$ less /etc/passwd
+root:x:0:0:root:/root:/bin/bash
+daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
+toor:x:1000:1000:toor:/home/toor:/bin/bash
+(Pressed q to exit)
+
+----------------------------------------------
+Working with /home
+----------------------------------------------
+
+toor@ip-172-31-10-214:~$ cd ~
+
+toor@ip-172-31-10-214:~$ pwd
+/home/toor
+
+toor@ip-172-31-10-214:~$ touch testfile.txt
+
+toor@ip-172-31-10-214:~$ ls
+testfile.txt
+
+----------------------------------------------
+Exploring /usr
+----------------------------------------------
+
+toor@ip-172-31-10-214:~$ ls /usr | head
+bin
+games
+include
+lib
+lib64
+local
+sbin
+share
+src
+
+toor@ip-172-31-10-214:~$ ls /usr/bin | wc -l
+1523
+
+----------------------------------------------
+Exploring /var
+----------------------------------------------
+
+toor@ip-172-31-10-214:~$ ls /var
+backups  cache  lib  local  lock  log  mail  opt  run  spool  tmp
+
+toor@ip-172-31-10-214:~$ sudo ls /var/log | head
+alternatives.log
+apt
+auth.log
+boot.log
+cloud-init.log
+dmesg
+kern.log
+syslog
+
+----------------------------------------------
+Working with /tmp
+----------------------------------------------
+
+toor@ip-172-31-10-214:~$ cd /tmp
+
+toor@ip-172-31-10-214:/tmp$ touch tempfile
+
+toor@ip-172-31-10-214:/tmp$ ls
+tempfile
+
+----------------------------------------------
+File System Navigation
+----------------------------------------------
+
+toor@ip-172-31-10-214:/tmp$ pwd
+/tmp
+
+toor@ip-172-31-10-214:/tmp$ ls -l
+-rw-r--r-- 1 toor toor 0 Feb 23 13:22 tempfile
+
+toor@ip-172-31-10-214:/tmp$ cd ..
+
+toor@ip-172-31-10-214:/$ cd
+
+----------------------------------------------
+Finding Files
+----------------------------------------------
+
+toor@ip-172-31-10-214:~$ find /etc -name "*.conf" | head
+/etc/adduser.conf
+/etc/debconf.conf
+/etc/host.conf
+/etc/resolv.conf
+
+toor@ip-172-31-10-214:~$ locate passwd
+/bin/passwd
+/etc/passwd
+/usr/bin/passwd
+
+----------------------------------------------
+Symbolic Links
+----------------------------------------------
+
+toor@ip-172-31-10-214:~$ ls -l /bin | grep '^l'
+lrwxrwxrwx 1 root root 7 Feb 10 10:00 sh -> dash
+
+toor@ip-172-31-10-214:~$ touch original.txt
+
+toor@ip-172-31-10-214:~$ ln -s original.txt link_to_original
+
+toor@ip-172-31-10-214:~$ ls -l link_to_original
+lrwxrwxrwx 1 toor toor 12 Feb 23 13:25 link_to_original -> original.txt
+
+----------------------------------------------
+Hard Links
+----------------------------------------------
+
+toor@ip-172-31-10-214:~$ ln original.txt hardlink_to_original
+
+toor@ip-172-31-10-214:~$ ls -i original.txt hardlink_to_original
+262349 original.txt
+262349 hardlink_to_original
+
+----------------------------------------------
+Lab 05 Completed Successfully
+----------------------------------------------
