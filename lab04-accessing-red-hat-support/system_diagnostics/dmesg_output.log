@@ -1,0 +1,15 @@
+[    0.000000] Linux version 5.14.0-427.el9.x86_64 (mockbuild@x86-builder) 
+[    0.000000] Command line: BOOT_IMAGE=/vmlinuz-5.14.0-427.el9.x86_64
+[    0.000000] x86/fpu: Supporting XSAVE feature 0x001: 'x87 floating point registers'
+[    0.000000] BIOS-provided physical RAM map:
+[    0.000000] e820: [mem 0x0000000000000000-0x000000003fffffff] usable
+[    0.123456] ACPI: Early table checksum verification disabled
+[    0.223344] CPU0: Intel(R) Xeon(R) CPU
+[    1.002345] virtio_net virtio0 eth0: renamed from ens3
+[    2.112233] EXT4-fs (nvme0n1p1): mounted filesystem with ordered data mode
+[    3.442233] systemd[1]: systemd 252 running in system mode
+[    5.332211] audit: type=1400 audit(1708688702.123:92): SELinux: enabled
+[    8.554433] IPv6: ADDRCONF(NETDEV_CHANGE): eth0: link becomes ready
+[   12.884455] random: crng init done
+[   14.774411] systemd-journald[365]: Journal started
+[   25.003421] podman: container runtime initialized
