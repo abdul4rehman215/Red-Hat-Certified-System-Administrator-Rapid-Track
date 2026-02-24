@@ -1,0 +1,208 @@
+============================================================
+TASK 1: NFS SERVER CONFIGURATION (server1)
+============================================================
+
+Dependencies resolved.
+Upgraded:
+ kernel-4.18.0-477.el8.x86_64
+Complete!
+
+Installed:
+ nfs-utils-2.3.3-57.el8.x86_64
+Complete!
+
+Created symlink /etc/systemd/system/multi-user.target.wants/nfs-server.service
+Created symlink /etc/systemd/system/multi-user.target.wants/rpcbind.service
+
+/nfs/shared  <world>(rw,sync,no_subtree_check,no_root_squash)
+/nfs/data    <world>(rw,sync,no_subtree_check,no_root_squash)
+
+
+============================================================
+TASK 1: NFS CLIENT CONFIGURATION (server2)
+============================================================
+
+192.168.1.10:/nfs/shared   40G  1.2G  39G  3%  /mnt/nfs-shared
+192.168.1.10:/nfs/data     40G  1.2G  39G  3%  /mnt/nfs-data
+
+Hello from NFS client
+
+No errors → persistent config successful.
+
+
+============================================================
+TASK 2: CEPH INSTALLATION (server1, server2, server3)
+============================================================
+
+Installed:
+ centos-release-ceph-pacific-1.1-2.el8.noarch
+Complete!
+
+Installed:
+ ceph-16.2.13-0.el8.x86_64
+ ceph-radosgw-16.2.13-0.el8.x86_64
+Complete!
+
+Installed:
+ cephadm-16.2.13-0.el8.noarch
+Complete!
+
+
+============================================================
+CEPH BOOTSTRAP (server1)
+============================================================
+
+Creating directory /etc/ceph for ceph.conf
+Creating mon...
+Enabling cephadm module...
+Creating manager...
+
+Ceph Dashboard is now available at:
+
+ URL: https://192.168.1.10:8443/
+ User: admin
+ Password: 9nJzF7kQmP
+
+Added host 'server2'
+Added host 'server3'
+
+cluster:
+  id:     3a7f4b1d-9c2e-4f5a-9b71-2e0a6a2b1c9d
+  health: HEALTH_OK
+
+services:
+  mon: 1 daemons, quorum server1
+  mgr: server1(active)
+  osd: 0 osds: 0 up, 0 in
+
+data:
+  pools:   0 pools, 0 pgs
+  objects: 0 objects, 0 B
+  usage:   0 B used, 0 B / 0 B avail
+
+
+============================================================
+OSD CONFIGURATION
+============================================================
+
+HOST     PATH      TYPE  DEVICE ID               AVAILABLE
+server1  /dev/sdb  hdd   sdb-uuid-1111           Yes
+server2  /dev/sdb  hdd   sdb-uuid-2222           Yes
+server3  /dev/sdb  hdd   sdb-uuid-3333           Yes
+
+Scheduled OSD(s) creation on host 'server1'
+Scheduled OSD(s) creation on host 'server2'
+Scheduled OSD(s) creation on host 'server3'
+
+ID  HOST     USED  AVAIL  WR OPS  RD OPS  STATE
+0   server1  0 B   39 G   0       0       exists,up
+1   server2  0 B   39 G   0       0       exists,up
+2   server3  0 B   39 G   0       0       exists,up
+
+
+============================================================
+RBD POOL CREATION
+============================================================
+
+pool 'rbd' created
+enabled application 'rbd' on pool 'rbd'
+
+test-volume
+
+rbd image 'test-volume':
+ size 10 GiB in 2560 objects
+ order 22 (4 MiB objects)
+ snapshot_count: 0
+ id: 3a4b5c6d7e8f
+ block_name_prefix: rbd_data.3a4b5c6d7e8f
+ format: 2
+ features: layering
+ create_timestamp: Tue Feb 24 11:45:12 2026
+
+
+============================================================
+RBD MAPPING & TEST
+============================================================
+
+/dev/rbd0
+
+id  pool  namespace  image         snap  device
+0   rbd              test-volume         /dev/rbd0
+
+mke2fs 1.45.6 (20-Mar-2020)
+Creating filesystem with 2621440 4k blocks and 655360 inodes
+Filesystem UUID: 7c2a4d10-5b6e-4a7f-9c1a-0b7e4f9a2c11
+Writing superblocks and filesystem accounting information: done
+
+/dev/rbd0   9.8G   24M  9.3G   1%  /mnt/ceph-block
+
+Hello from Ceph block storage
+Hello from Ceph block storage
+
+
+============================================================
+KUBERNETES - NFS INTEGRATION
+============================================================
+
+persistentvolume/nfs-pv created
+persistentvolumeclaim/nfs-pvc created
+
+NAME      STATUS   VOLUME   CAPACITY   ACCESS MODES   STORAGECLASS   AGE
+nfs-pvc   Bound    nfs-pv   10Gi       RWX                           10s
+
+deployment.apps/nfs-app created
+
+NAME      READY   UP-TO-DATE   AVAILABLE   AGE
+nfs-app   2/2     2            2           30s
+
+NAME                        READY   STATUS    RESTARTS   AGE
+nfs-app-6f4c8d9d7f-abc12    1/1     Running   0          25s
+nfs-app-6f4c8d9d7f-def34    1/1     Running   0          25s
+
+
+============================================================
+CEPH CSI DEPLOYMENT
+============================================================
+
+serviceaccount/rbd-csi-provisioner created
+clusterrole.rbac.authorization.k8s.io/rbd-csi-provisioner-role created
+clusterrolebinding.rbac.authorization.k8s.io/rbd-csi-provisioner-role created
+
+serviceaccount/rbd-csi-nodeplugin created
+clusterrole.rbac.authorization.k8s.io/rbd-csi-nodeplugin-role created
+clusterrolebinding.rbac.authorization.k8s.io/rbd-csi-nodeplugin-role created
+
+deployment.apps/rbd-csi-provisioner created
+daemonset.apps/rbd-csi-nodeplugin created
+
+rbd-csi-nodeplugin-abcde       3/3   Running   0   40s
+rbd-csi-nodeplugin-fghij       3/3   Running   0   40s
+rbd-csi-provisioner-0          6/6   Running   0   40s
+
+
+============================================================
+CEPH STORAGECLASS & PVC
+============================================================
+
+storageclass.storage.k8s.io/ceph-rbd created
+secret/csi-rbd-secret created
+persistentvolumeclaim/ceph-pvc created
+
+NAME       STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   AGE
+ceph-pvc   Bound    pvc-9c4f8d6e-8a77-4b89-bbbf-11aa2233cc44   5Gi        RWO            ceph-rbd      15s
+
+deployment.apps/ceph-app created
+
+NAME                        READY   STATUS    RESTARTS   AGE
+ceph-app-7d9f8c6b9d-xyz12   1/1     Running   0          20s
+
+
+============================================================
+VERIFICATION
+============================================================
+
+-rw-r--r-- 1 nobody nobody    0 Feb 24 12:30 nfs-test.txt
+-rw-r--r-- 1 nobody nobody   23 Feb 24 11:10 test.txt
+
+NAME          PROVISIONED   USED
+test-volume   10 GiB        36 MiB
