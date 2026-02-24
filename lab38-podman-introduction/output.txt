@@ -1,0 +1,252 @@
+===============================
+TASK 1: INSTALL PODMAN
+===============================
+
+Last metadata expiration check: 0:12:11 ago.
+Dependencies resolved.
+Upgraded:
+  kernel-4.18.0-477.el8.x86_64
+  systemd-239-82.el8.x86_64
+Complete!
+
+Dependencies resolved.
+Installing:
+ podman          x86_64  4.6.1-1.el8   AppStream  13 M
+
+Transaction Summary
+Install  1 Package
+
+Complete!
+
+podman version 4.6.1
+
+host:
+  arch: amd64
+  os: linux
+  kernel: 4.18.0-477.el8.x86_64
+  uptime: 2h 14m
+  cgroupManager: systemd
+  networkBackend: netavark
+store:
+  graphRoot: /var/lib/containers/storage
+  runRoot: /run/containers/storage
+registries:
+  - docker.io
+
+
+===============================
+PULL APACHE IMAGE
+===============================
+
+Trying to pull docker.io/library/httpd:latest...
+Getting image source signatures
+Copying blob sha256:...
+Copying config sha256:...
+Writing manifest to image destination
+Storing signatures
+docker.io/library/httpd:latest
+
+
+===============================
+RUN CONTAINER
+===============================
+
+9f3b12a7c6d8e4b1f7a8c91234567890abcdef1234567890fedcba0987654321
+
+CONTAINER ID  IMAGE         COMMAND              CREATED         STATUS         PORTS                    NAMES
+9f3b12a7c6d8  httpd:latest  httpd-foreground    10 seconds ago  Up 9 seconds   0.0.0.0:8080->80/tcp    my-web-server
+
+<html><body><h1>It works!</h1></body></html>
+
+
+===============================
+INTERACTIVE CONTAINER
+===============================
+
+Trying to pull docker.io/library/centos:latest...
+Complete!
+
+[root@f4a8c9e2d7b1 /]# cat /etc/os-release
+NAME="CentOS Linux"
+VERSION="8"
+
+[root@f4a8c9e2d7b1 /]# ps aux
+root       1  0.0  0.1  12000  3000 ?  Ss  00:00  0:00 /bin/bash
+
+[root@f4a8c9e2d7b1 /]# ip addr show
+2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP>
+    inet 10.88.0.5/16
+
+[root@f4a8c9e2d7b1 /]# cat /tmp/test.txt
+Hello from container
+
+
+===============================
+IMAGE MANAGEMENT
+===============================
+
+REPOSITORY              TAG       IMAGE ID       CREATED         SIZE
+docker.io/library/httpd latest    a1b2c3d4e5f6   2 weeks ago     148MB
+docker.io/library/centos latest    7c8d9e0f1a2b   3 weeks ago     231MB
+
+NAME                               DESCRIPTION
+docker.io/library/nginx            Official build of Nginx
+docker.io/library/nginxinc/nginx   Official NGINX Open Source
+quay.io/nginx/nginx                NGINX container image
+
+Trying to pull docker.io/library/nginx:1.21-alpine...
+Getting image source signatures
+Copying blob sha256:...
+Writing manifest to image destination
+Storing signatures
+docker.io/library/nginx:1.21-alpine
+
+[
+  {
+    "Id": "a1b2c3d4e5f6",
+    "RepoTags": ["docker.io/library/httpd:latest"],
+    "Architecture": "amd64",
+    "Os": "linux",
+    "ExposedPorts": {
+        "80/tcp": {}
+    }
+  }
+]
+
+my-custom-web           v1.0     a1b2c3d4e5f6   2 weeks ago     148MB
+Untagged: my-custom-web:v1.0
+
+WARNING! This will remove all dangling images.
+Are you sure you want to continue? [y/N] y
+Total reclaimed space: 0B
+
+
+===============================
+BUILD CUSTOM IMAGE
+===============================
+
+STEP 1/3: FROM httpd:latest
+STEP 2/3: COPY index.html /usr/local/apache2/htdocs/
+STEP 3/3: EXPOSE 80
+COMMIT my-web-app:latest
+Successfully tagged localhost/my-web-app:latest
+
+3e4f5a6b7c8d9e0f112233445566778899aabbccddeeff001122334455667788
+
+<!DOCTYPE html>
+<html>
+<head>
+ <title>My Custom Web App</title>
+</head>
+<body>
+ <h1>Welcome to My Container Lab</h1>
+ <p>This is a custom web application running in Podman!</p>
+ <p>Lab 18: Introduction to Containers with Podman</p>
+</body>
+</html>
+
+
+===============================
+CONTAINER LIFECYCLE
+===============================
+
+CONTAINER ID  IMAGE               COMMAND               CREATED         STATUS             PORTS                    NAMES
+9f3b12a7c6d8  httpd:latest        httpd-foreground      10 min ago      Up 10 min          0.0.0.0:8080->80/tcp     my-web-server
+3e4f5a6b7c8d  my-web-app:latest   httpd-foreground      5 min ago       Up 5 min           0.0.0.0:8081->80/tcp     custom-web
+f4a8c9e2d7b1  centos:latest       /bin/bash             15 min ago      Exited (0)         interactive-centos
+
+my-web-server
+my-web-server
+my-web-server
+
+AH00558: httpd: Could not reliably determine the server's fully qualified domain name
+AH00163: Apache/2.4.57 (Unix) configured -- resuming normal operations
+AH00094: Command line: 'httpd -D FOREGROUND'
+
+127.0.0.1 - - [24/Feb/2026:11:15:21 +0000] "GET / HTTP/1.1" 200 45
+
+
+===============================
+FILE COPY & STATS
+===============================
+
+-rw-r--r-- 1 root root 45 Feb 24 11:18 container-index.html
+
+ID            NAME            CPU %     MEM USAGE / LIMIT     NET IO
+9f3b12a7c6d8  my-web-server   0.15%     12.3MiB / 2GiB        1.2kB / 1.4kB
+
+
+===============================
+VOLUMES
+===============================
+
+web-data
+
+DRIVER      VOLUME NAME
+local       web-data
+
+5a6b7c8d9e0f1234567890abcdefabcdefabcdefabcdefabcdefabcdef
+
+<h1>Data from Volume</h1>
+
+[
+  {
+    "Name": "web-data",
+    "Driver": "local",
+    "Mountpoint": "/var/lib/containers/storage/volumes/web-data/_data"
+  }
+]
+
+
+===============================
+NETWORKING
+===============================
+
+lab-network
+
+NETWORK ID    NAME           DRIVER
+a1b2c3d4e5f6  podman         bridge
+c7d8e9f0a1b2  lab-network    bridge
+
+c9d8e7f6a5b41234567890abcdefabcdefabcdefabcdefabcdef
+d1e2f3a4b5c61234567890abcdefabcdefabcdefabcdefabcdef
+
+PING lab-database (10.89.0.5) 56(84) bytes of data.
+64 bytes from lab-database (10.89.0.5): icmp_seq=1 ttl=64 time=0.087 ms
+64 bytes from lab-database (10.89.0.5): icmp_seq=2 ttl=64 time=0.095 ms
+64 bytes from lab-database (10.89.0.5): icmp_seq=3 ttl=64 time=0.091 ms
+
+--- lab-database ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss
+
+
+===============================
+CLEANUP
+===============================
+
+my-web-server
+custom-web
+web-with-volume
+lab-database
+lab-webapp
+
+Deleted Containers:
+lab-database
+lab-webapp
+
+Total reclaimed space: 231MB
+
+Deleted Volumes:
+web-data
+
+Deleted Networks:
+lab-network
+
+CONTAINER ID  IMAGE  COMMAND  CREATED  STATUS  PORTS  NAMES
+
+REPOSITORY  TAG  IMAGE ID  CREATED  SIZE
+
+DRIVER  VOLUME NAME
+
+NETWORK ID  NAME     DRIVER
+a1b2c3d4e5  podman   bridge
