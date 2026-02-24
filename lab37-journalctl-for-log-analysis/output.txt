@@ -1,0 +1,172 @@
+[root@ip-172-31-18-143 ~]#
+
+journalctl [OPTIONS...] [MATCHES...]
+
+Query the journal.
+
+  -h --help                 Show this help
+     --version              Show package version
+     --no-pager             Do not pipe output into a pager
+  -n --lines[=INTEGER]      Show the most recent journal entries
+  -f --follow               Follow journal
+  -r --reverse              Show entries in reverse order
+  -o --output=STRING        Change output mode
+     --since=DATE           Show entries not older than DATE
+     --until=DATE           Show entries not newer than DATE
+  -p --priority=RANGE       Show entries with specified priority
+  -u --unit=UNIT            Show entries for specified unit
+  -k --dmesg                Show kernel messages
+
+Feb 24 09:01:11 ip-172-31-18-143 systemd[1]: Started NetworkManager.service.
+Feb 24 09:01:12 ip-172-31-18-143 sshd[812]: Server listening on 0.0.0.0 port 22.
+Feb 24 09:01:12 ip-172-31-18-143 sshd[812]: Server listening on :: port 22.
+Feb 24 09:02:01 ip-172-31-18-143 sudo[950]: centos : TTY=pts/0 ; PWD=/home/centos ; USER=root ; COMMAND=/bin/su -
+Feb 24 09:05:32 ip-172-31-18-143 systemd[1]: Started firewalld.service.
+-- Logs begin at Tue 2026-02-24 08:55:01 UTC, end at Tue 2026-02-24 10:12:45 UTC. --
+Press q to exit.
+
+Feb 24 10:10:01 ip-172-31-18-143 systemd[1]: Reloaded firewalld.service.
+Feb 24 10:11:14 ip-172-31-18-143 sshd[1201]: Accepted password for centos from 127.0.0.1 port 55821 ssh2
+Feb 24 10:11:14 ip-172-31-18-143 sshd[1201]: pam_unix(sshd:session): session opened
+Feb 24 10:12:32 ip-172-31-18-143 sudo[1342]: centos : TTY=pts/1 ; COMMAND=/usr/bin/journalctl -n
+
+Feb 24 10:14:02 ip-172-31-18-143 sshd[1412]: Accepted password for centos
+Feb 24 10:14:05 ip-172-31-18-143 sudo[1420]: centos : COMMAND=/usr/bin/journalctl -f
+
+Feb 24 10:15:21 ip-172-31-18-143 sudo[1450]: centos : COMMAND=/usr/bin/journalctl -r
+Feb 24 10:14:02 ip-172-31-18-143 sshd[1412]: Accepted password
+
+Feb 24 10:15:21 ip-172-31-18-143 sudo[1450]: centos : COMMAND=/usr/bin/journalctl -r
+Feb 24 10:14:02 ip-172-31-18-143 sshd[1412]: Accepted password
+Feb 24 10:11:14 ip-172-31-18-143 sshd[1201]: session opened
+Feb 24 10:10:01 ip-172-31-18-143 systemd[1]: Reloaded firewalld.service.
+
+{"_SYSTEMD_UNIT":"sshd.service","MESSAGE":"Accepted password for centos","PRIORITY":"6"}
+{"_SYSTEMD_UNIT":"sudo.service","MESSAGE":"centos : COMMAND=/usr/bin/journalctl","PRIORITY":"6"}
+{"_SYSTEMD_UNIT":"systemd.service","MESSAGE":"Reloaded firewalld.service","PRIORITY":"5"}
+
+MESSAGE=Accepted password for centos
+PRIORITY=6
+_UID=0
+_PID=1412
+_SYSTEMD_UNIT=sshd.service
+
+Feb 24 08:55:01 ip-172-31-18-143 systemd[1]: Started NetworkManager.service.
+Feb 24 09:01:12 ip-172-31-18-143 sshd[812]: Server listening on 0.0.0.0 port 22.
+Feb 24 09:05:32 ip-172-31-18-143 systemd[1]: Started firewalld.service.
+Feb 24 10:14:02 ip-172-31-18-143 sshd[1412]: Accepted password for centos
+
+Feb 23 23:59:58 ip-172-31-18-143 systemd[1]: Stopping user session.
+Feb 23 23:59:59 ip-172-31-18-143 systemd[1]: Starting Cleanup of Temporary Directories.
+
+Feb 24 09:45:11 ip-172-31-18-143 sudo[1320]: centos : COMMAND=/usr/bin/journalctl
+Feb 24 10:11:14 ip-172-31-18-143 sshd[1201]: session opened
+`
+-- No entries --
+
+Feb 24 08:59:21 ip-172-31-18-143 kernel: error: failed to initialize module xyz
+
+Feb 24 09:12:11 ip-172-31-18-143 systemd[1]: Warning: Deprecated option used.
+Feb 24 09:14:33 ip-172-31-18-143 sshd[1011]: Failed password attempt
+
+-- No entries --
+
+Feb 24 10:22:01 ip-172-31-18-143 root[1552]: This is a test error message
+Feb 24 10:22:02 ip-172-31-18-143 root[1553]: This is a test warning message
+Feb 24 10:22:03 ip-172-31-18-143 root[1554]: This is a test info message
+
+NetworkManager.service
+firewalld.service
+sshd.service
+systemd-journald.service
+crond.service
+
+Feb 24 09:01:12 ip-172-31-18-143 sshd[812]: Server listening on port 22.
+Feb 24 10:11:14 ip-172-31-18-143 sshd[1201]: Accepted password for centos
+
+Feb 24 08:55:01 ip-172-31-18-143 NetworkManager[720]: Started Network Manager.
+
+Feb 24 08:55:00 ip-172-31-18-143 kernel: Linux version 4.18.0-477.el8.x86_64
+Feb 24 08:55:00 ip-172-31-18-143 kernel: Command line: BOOT_IMAGE=/vmlinuz
+
+root         1  0.0  0.1  19368  3056 ?        Ss   08:55   0:01 /usr/lib/systemd/systemd
+
+Feb 24 10:10:01 ip-172-31-18-143 systemd[1]: Reloaded firewalld.service.
+
+-- No entries --
+
+Archived and active journals take up 16.0M in the file system.
+
+[Journal]
+#Storage=auto
+#Compress=yes
+#SystemMaxUse=
+#SystemKeepFree=
+#MaxRetentionSec=
+
+ls: cannot access '/var/log/journal/': No such file or directory
+
+● systemd-journald.service - Journal Service
+   Loaded: loaded (/usr/lib/systemd/system/systemd-journald.service; static)
+   Active: active (running)
+
+drwxr-sr-x 3 root systemd-journal 4096 Feb 24 10:35 .
+drwxr-xr-x 9 root root             4096 Feb 24 10:34 ..
+drwxr-sr-x 2 root systemd-journal 4096 Feb 24 10:35 9f5d8a0e6c4a4b38a12d3e4c56789012
+
+-rw-r----- 1 root systemd-journal 8388608 Feb 24 10:35 system.journal
+
+Archived and active journals take up 20.0M in the file system.
+
+Feb 24 10:37:01 ip-172-31-18-143 root[1622]: Test persistent log entry 1
+Feb 24 10:37:01 ip-172-31-18-143 root[1623]: Test persistent log entry 2
+Feb 24 10:37:01 ip-172-31-18-143 root[1624]: Test persistent log entry 3
+Feb 24 10:37:01 ip-172-31-18-143 root[1625]: Test persistent log entry 4
+Feb 24 10:37:01 ip-172-31-18-143 root[1626]: Test persistent log entry 5
+Feb 24 10:37:01 ip-172-31-18-143 root[1627]: Test persistent log entry 6
+Feb 24 10:37:01 ip-172-31-18-143 root[1628]: Test persistent log entry 7
+Feb 24 10:37:01 ip-172-31-18-143 root[1629]: Test persistent log entry 8
+Feb 24 10:37:01 ip-172-31-18-143 root[1630]: Test persistent log entry 9
+Feb 24 10:37:01 ip-172-31-18-143 root[1631]: Test persistent log entry 10
+
+Archived and active journals take up 20.0M in the file system.
+PASS: No corruption detected.
+
+Deleted archived journal files older than 2d.
+
+Vacuuming done, freed 0B of archived journals.
+
+No files removed.
+
+Storage=persistent
+SystemMaxUse=524288000
+SystemKeepFree=1073741824
+
+Feb 24 08:59:21 ip-172-31-18-143 kernel: error: failed to initialize module xyz
+Feb 24 10:22:01 ip-172-31-18-143 root[1552]: This is a test error message
+
+Feb 24 09:14:33 ip-172-31-18-143 sshd[1011]: Failed password for invalid user admin from 192.168.1.55 port 51422 ssh2
+Feb 24 09:14:35 ip-172-31-18-143 sshd[1011]: Connection closed by invalid user admin
+
+Feb 24 10:37:01 ip-172-31-18-143 root[1622]: Test persistent log entry 1
+Feb 24 10:37:01 ip-172-31-18-143 root[1623]: Test persistent log entry 2
+Feb 24 10:22:01 ip-172-31-18-143 root[1552]: This is a test error message
+
+-1  9f5d8a0e6c4a4b38a12d3e4c56789012 Tue 2026-02-23 08:55:01 UTC—Tue 2026-02-23 23:59:59 UTC
+ 0  3a7f4b1d9c2e4f5a6b7c8d9e01234567 Tue 2026-02-24 08:55:01 UTC—Tue 2026-02-24 10:45:12 UTC
+
+-rw-r--r-- 1 root root 1.2M Feb 24 10:46 /tmp/today_logs.json
+
+[2026-02-24 10:48:21] ALERT: 1 critical errors found in the last 5 minutes
+Feb 24 10:48:20 ip-172-31-18-143 root[1702]: Test critical error for monitoring
+
+Archived and active journals take up 22.0M in the file system.
+
+Feb 24 10:52:01 ip-172-31-18-143 root[1741]: Lab 17 verification: Warning message
+Feb 24 10:52:02 ip-172-31-18-143 root[1742]: Lab 17 verification: Error message
+
+Feb 24 10:52:00 ip-172-31-18-143 root[1740]: Lab 17 verification: Info message
+Feb 24 10:52:01 ip-172-31-18-143 root[1741]: Lab 17 verification: Warning message
+Feb 24 10:52:02 ip-172-31-18-143 root[1742]: Lab 17 verification: Error message
+
+-rw-r----- 1 root systemd-journal 10485760 Feb 24 10:52 /var/log/journal/9f5d8a0e6c4a4b38a12d3e4c56789012/system.journal
