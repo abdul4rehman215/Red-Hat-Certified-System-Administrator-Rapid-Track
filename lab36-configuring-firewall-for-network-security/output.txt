@@ -1,0 +1,419 @@
+firewalld-1.3.4-2.el8.noarch
+firewalld-filesystem-1.3.4-2.el8.noarch
+
+Last metadata expiration check: 0:02:14 ago.
+Package firewalld-1.3.4-2.el8.noarch is already installed.
+Dependencies resolved.
+Nothing to do.
+Complete!
+
+Created symlink /etc/systemd/system/dbus-org.fedoraproject.FirewallD1.service → /usr/lib/systemd/system/firewalld.service.
+Created symlink /etc/systemd/system/multi-user.target.wants/firewalld.service → /usr/lib/systemd/system/firewalld.service.
+
+● firewalld.service - firewalld - dynamic firewall daemon
+   Loaded: loaded (/usr/lib/systemd/system/firewalld.service; enabled)
+   Active: active (running) since Tue 2026-02-24 09:11:02 UTC; 8s ago
+     Docs: man:firewalld(1)
+ Main PID: 1324 (firewalld)
+    Tasks: 2 (limit: 4915)
+   Memory: 24.5M
+   CGroup: /system.slice/firewalld.service
+           └─1324 /usr/bin/python3 -Es /usr/sbin/firewalld --nofork --nopid
+
+running
+
+public (active)
+  target: default
+  icmp-block-inversion: no
+  interfaces: eth0
+  sources:
+  services: cockpit dhcpv6-client ssh
+  ports:
+  protocols:
+  forward: no
+  masquerade: no
+  forward-ports:
+  source-ports:
+  icmp-blocks:
+  rich rules:
+
+block dmz drop external home internal public trusted work
+
+public
+
+public
+  interfaces: eth0
+
+success
+success
+success
+success
+success
+success
+
+public (active)
+  target: default
+  icmp-block-inversion: no
+  interfaces: eth0
+  sources:
+  services: cockpit dhcpv6-client http https ssh
+  ports: 8080/tcp 3000-3005/tcp
+  protocols:
+  forward: no
+  masquerade: no
+  forward-ports:
+  source-ports:
+  icmp-blocks:
+  rich rules:
+
+success
+success
+success
+success
+
+public (active)
+  target: default
+  icmp-block-inversion: no
+  interfaces: eth0
+  sources: 192.168.1.100 192.168.1.0/24
+  services: cockpit dhcpv6-client http https ssh
+  ports: 8080/tcp 3000-3005/tcp
+  protocols:
+  forward: no
+  masquerade: no
+  forward-ports:
+  source-ports:
+  icmp-blocks:
+  rich rules:
+        rule source address="192.168.1.50" drop
+        rule source address="192.168.1.100" service name="ssh" accept
+
+Last metadata expiration check: 0:10:34 ago.
+Dependencies resolved.
+================================================================================
+ Package        Arch   Version              Repository                 Size
+================================================================================
+Installing:
+ nmap           x86_64 2:7.70-6.el8         AppStream                 5.8 M
+ telnet         x86_64 1:0.17-64.el8        BaseOS                     70 k
+ nc             x86_64 1.84-1.el8           AppStream                   59 k
+
+Transaction Summary
+================================================================================
+Install  3 Packages
+
+Total download size: 5.9 M
+Installed size: 24 M
+Downloading Packages:
+(1/3): telnet-0.17-64.el8.x86_64.rpm          220 kB/s |  70 kB
+(2/3): nc-1.84-1.el8.x86_64.rpm               180 kB/s |  59 kB
+(3/3): nmap-7.70-6.el8.x86_64.rpm             3.1 MB/s | 5.8 MB
+Running transaction
+Installed:
+  nmap-7.70-6.el8.x86_64
+  telnet-0.17-64.el8.x86_64
+  nc-1.84-1.el8.x86_64
+
+Complete!
+
+Dependencies resolved.
+================================================================================
+ Package     Arch   Version          Repository        Size
+================================================================================
+Installing:
+ httpd       x86_64 2.4.37-57.el8    AppStream        1.4 M
+
+Transaction Summary
+================================================================================
+Install  1 Package
+
+Complete!
+
+Created symlink /etc/systemd/system/multi-user.target.wants/httpd.service → /usr/lib/systemd/system/httpd.service.
+
+<h1>Firewall Test Page</h1>
+
+<h1>Firewall Test Page</h1>
+
+<h1>Firewall Test Page</h1>
+
+Starting Nmap 7.70 ( https://nmap.org ) at 2026-02-24 09:32 UTC
+Nmap scan report for localhost (127.0.0.1)
+Host is up (0.00012s latency).
+
+PORT   STATE SERVICE
+80/tcp open  http
+
+Nmap done: 1 IP address (1 host up) scanned in 0.05 seconds
+
+Trying 127.0.0.1...
+Connected to localhost.
+Escape character is '^]'.
+Connection closed by foreign host.
+
+ssh
+
+The authenticity of host 'localhost (::1)' can't be established.
+ECDSA key fingerprint is SHA256:AbcDeFgH123456.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added 'localhost' (ECDSA) to the list of known hosts.
+centos@localhost's password:
+Last login: Tue Feb 24 09:20:12 2026 from ::1
+
+Starting Nmap 7.70 at 2026-02-24 09:35 UTC
+Nmap scan report for localhost
+Host is up (0.00010s latency).
+
+PORT   STATE SERVICE
+22/tcp open  ssh
+
+Nmap done: 1 IP address (1 host up) scanned in 0.04 seconds
+
+Trying 127.0.0.1...
+telnet: connect to address 127.0.0.1: Connection refused
+
+Starting Nmap 7.70 ( https://nmap.org ) at 2026-02-24 09:42 UTC
+Nmap scan report for localhost (127.0.0.1)
+Host is up (0.000093s latency).
+Not shown: 997 closed ports
+PORT     STATE SERVICE
+22/tcp   open  ssh
+80/tcp   open  http
+8080/tcp open  http-proxy
+
+Nmap done: 1 IP address (1 host up) scanned in 0.11 seconds
+
+Ncat: Version 7.70 ( https://nmap.org/ncat )
+Ncat: Connection refused.
+
+#"zones1"
+public (active)
+  target: default
+  interfaces: eth0
+  services: cockpit dhcpv6-client http https ssh
+  ports: 8080/tcp 3000-3005/tcp
+  rich rules:
+        rule source address="192.168.1.50" drop
+        rule source address="192.168.1.100" service name="ssh" accept
+
+internal
+  target: default
+  interfaces:
+  services: dhcpv6-client ssh
+  ports:
+  rich rules:
+
+dmz
+  target: default
+  interfaces:
+  services:
+  ports:
+
+trusted
+  target: ACCEPT
+
+#"zone_details"
+public (active)
+  interfaces: eth0
+  services: cockpit dhcpv6-client http https ssh
+  ports: 8080/tcp 3000-3005/tcp
+
+internal
+  interfaces:
+  services: dhcpv6-client ssh
+  ports:
+
+dmz
+  interfaces:
+  services:
+  ports:
+
+
+#"newzone"
+success
+success
+
+#"zone_list_after_creation"
+block dmz drop external home internal public trusted work webserver
+
+#"webserver_config"
+success
+success
+success
+success
+success
+
+#"webserver_details"
+webserver
+  target: default
+  interfaces:
+  services: http https ssh
+  ports: 8080/tcp
+  description: Web Server Zone for HTTP/HTTPS traffic
+  rich rules:
+
+#"ip_addr_output"
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN
+    inet 127.0.0.1/8 scope host lo
+
+2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state UP
+    inet 172.31.14.87/20 brd 172.31.15.255 scope global dynamic eth0
+    inet6 fe80::f816:3eff:fe12:abcd/64 scope link
+
+#"active_zones_before"
+public
+  interfaces: eth0
+
+#"interface_change"
+success
+success
+
+#"active_zones_after"
+webserver
+  interfaces: eth0
+
+#"internal_zone_config"
+success
+success
+success
+success
+success
+
+#"dmz_zone_config"
+success
+success
+success
+success
+
+#"internal_zone_final"
+internal
+  target: default
+  interfaces:
+  sources: 192.168.1.0/24 10.0.0.0/8
+  services: dhcpv6-client nfs samba ssh
+  ports:
+  rich rules:
+
+#"dmz_zone_final"
+dmz
+  target: default
+  interfaces:
+  services: http https
+  ports: 8080/tcp
+  rich rules:
+
+#"rich_rules_add"
+success
+success
+success
+success
+success
+
+#"rich_rules_list"
+rule source address="192.168.1.50" drop
+rule source address="192.168.1.100" service name="ssh" accept
+rule source address="192.168.1.0/24" service name="ssh" accept
+rule service name="ssh" accept limit value="3/m"
+rule drop log prefix="FIREWALL-DROP: " level="warning"
+
+#"zone_service_check"
+cockpit dhcpv6-client http https ssh
+dhcpv6-client nfs samba ssh
+
+#"nmap_zone_test"
+Starting Nmap 7.70 at 2026-02-24 10:05 UTC
+Nmap scan report for localhost
+Host is up (0.000084s latency).
+
+PORT    STATE SERVICE
+22/tcp  open  ssh
+80/tcp  open  http
+443/tcp open  https
+
+Nmap done: 1 IP address (1 host up) scanned in 0.07 seconds
+
+#"journal_firewalld"
+Feb 24 10:06:14 ip-172-31-14-87 firewalld[1324]: WARNING: FIREWALL-DROP: IN=eth0 OUT= MAC=...
+Feb 24 10:06:20 ip-172-31-14-87 firewalld[1324]: WARNING: FIREWALL-DROP: IN=eth0 OUT= MAC=...
+
+#"zone_verify"
+webserver
+  interfaces: eth0
+webserver
+  target: default
+  interfaces: eth0
+  services: http https ssh
+  ports: 8080/tcp
+  description: Web Server Zone for HTTP/HTTPS traffic
+
+
+### 🔧 Troubleshooting Outputs
+
+#"iptables_check"
+Unit iptables.service could not be found.
+Failed to stop iptables.service: Unit iptables.service not loaded.
+Failed to disable unit: Unit file iptables.service does not exist.
+```
+
+#"restart_firewalld"
+(no output – command executed successfully)
+
+#"permanent_config"
+webserver
+  target: default
+  interfaces: eth0
+  services: http https ssh
+  ports: 8080/tcp
+  rich rules:
+        rule source address="192.168.1.50" drop
+        rule source address="192.168.1.100" service name="ssh" accept
+        rule source address="192.168.1.0/24" service name="ssh" accept
+        rule service name="ssh" accept limit value="3/m"
+        rule drop log prefix="FIREWALL-DROP: " level="warning"
+
+#"default_zone_check"
+public
+
+#"allowed_services_check"
+cockpit dhcpv6-client http https ssh
+
+#"zone_active_check"
+webserver
+  interfaces: eth0
+
+#"zone_exists_check"
+block dmz drop external home internal public trusted work webserver
+
+#"zone_reload_success"
+success
+
+#"firewalld_status_verify"
+● firewalld.service - firewalld - dynamic firewall daemon
+   Loaded: loaded (/usr/lib/systemd/system/firewalld.service; enabled)
+   Active: active (running)
+running
+
+
+#"list_all_current"
+webserver (active)
+  interfaces: eth0
+  services: http https ssh
+  ports: 8080/tcp
+
+#"internal_verify"
+internal
+  sources: 192.168.1.0/24 10.0.0.0/8
+  services: dhcpv6-client nfs samba ssh
+
+#"rich_rules_verify"
+rule source address="192.168.1.50" drop
+rule source address="192.168.1.100" service name="ssh" accept
+rule source address="192.168.1.0/24" service name="ssh" accept
+rule service name="ssh" accept limit value="3/m"
+rule drop log prefix="FIREWALL-DROP: " level="warning"
+
+#"port_test_verify"
+PORT   STATE SERVICE
+80/tcp open  http
+
+telnet: connect to address 127.0.0.1: Connection refused
