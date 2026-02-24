@@ -1,0 +1,13 @@
+[Unit]
+Description=Problem Service for Testing
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/bin/bash -c "while true; do echo 'Service running'; sleep 30; done"
+ExecStop=/bin/bash -c "exit 1"
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
