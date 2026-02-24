@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ceph-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ceph-app
+  template:
+    metadata:
+      labels:
+        app: ceph-app
+    spec:
+      containers:
+        - name: app
+          image: nginx:latest
+          volumeMounts:
+            - name: ceph-storage
+              mountPath: /data
+      volumes:
+        - name: ceph-storage
+          persistentVolumeClaim:
+            claimName: ceph-pvc
