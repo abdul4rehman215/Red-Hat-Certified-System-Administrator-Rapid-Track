@@ -9,15 +9,16 @@ A complete **40-lab hands-on Linux system administration engineering portfolio**
 <div align="center">
 
 <!-- ========================= PLATFORM & STACK ========================= -->
-![RHEL](https://img.shields.io/badge/OS%20%7CRed%20Hat-Enterprise%20Linux%208%20%7C%209-EE0000?style=for-the-badge&logo=redhat)
+![RHEL](https://img.shields.io/badge/OS%20%7C%20Red%20Hat-Enterprise%20Linux%208%20%7C%209-EE0000?style=for-the-badge&logo=redhat&logoColor=EE0000)
 ![Linux](https://img.shields.io/badge/Linux-Enterprise-black?style=for-the-badge&logo=linux)
 ![CentOS](https://img.shields.io/badge/CentOS-Stream-purple?style=for-the-badge&logo=centos)
 ![Bash](https://img.shields.io/badge/Bash-Scripting-4EAA25?style=for-the-badge&logo=gnu-bash)
 ![Systemd](https://img.shields.io/badge/Systemd-Service%20Management-blue?style=for-the-badge)
 ![SELinux](https://img.shields.io/badge/SELinux-MAC%20Security-orange?style=for-the-badge)
 ![LVM](https://img.shields.io/badge/LVM-Storage%20Virtualization-darkred?style=for-the-badge)
-![Podman](https://img.shields.io/badge/Containers-Podman-892CA0?style=for-the-badge&logo=podman)
-
+![Containers](https://img.shields.io/badge/Containers-Containerized%20Workloads-1D63ED?style=for-the-badge)
+![Podman](https://img.shields.io/badge/Podman-Rootless%20Containers-892CA0?style=for-the-badge&logo=podman)
+![Kubernetes](https://img.shields.io/badge/Kubernetes-Orchestration%20%7C%20Storage%20Integration-326CE5?style=for-the-badge&logo=kubernetes&logoColor=white)
 
 <!-- ========================= FOCUS ========================= -->
 
@@ -229,6 +230,7 @@ Each lab is execution-focused and includes:
 ![Focus](https://img.shields.io/badge/Focus-Automation%20Engineering-critical?style=for-the-badge)
 ![Focus](https://img.shields.io/badge/Focus-Enterprise%20Troubleshooting-yellow?style=for-the-badge)
 ![Focus](https://img.shields.io/badge/Focus-Container%20%26%20Distributed%20Storage-9d4edd?style=for-the-badge)
+![Kubernetes](https://img.shields.io/badge/Kubernetes-CSI%20%26%20PV%2FPVC-326CE5?style=for-the-badge&logo=kubernetes&logoColor=326CE5)
 
 </div>
 
