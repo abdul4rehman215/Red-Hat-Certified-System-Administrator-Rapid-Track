@@ -1,0 +1,10 @@
+[Unit]
+Description=Run backup-configs daily
+Requires=backup-configs.service
+
+[Timer]
+OnCalendar=daily
+Persistent=true
+
+[Install]
+WantedBy=timers.target
