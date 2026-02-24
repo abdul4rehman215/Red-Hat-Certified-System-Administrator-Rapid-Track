@@ -1,0 +1,179 @@
+-bash-4.2$ sudo whoami
+root
+
+-bash-4.2$ sestatus
+SELinux status:                 enabled
+SELinuxfs mount:                /sys/fs/selinux
+SELinux root directory:         /etc/selinux
+Loaded policy name:             targeted
+Current mode:                   enforcing
+Mode from config file:          enforcing
+Policy MLS status:              enabled
+Policy deny_unknown status:     allowed
+Memory protection checking:     actual (secure)
+Max kernel policy version:      33
+
+-bash-4.2$ getenforce
+Enforcing
+
+-bash-4.2$ cat /etc/selinux/config
+# This file controls the state of SELinux on the system.
+# SELINUX= can take one of these three values:
+#     enforcing - SELinux security policy is enforced.
+#     permissive - SELinux prints warnings instead of enforcing.
+#     disabled - No SELinux policy is loaded.
+SELINUX=enforcing
+
+# SELINUXTYPE= can take one of these values:
+#     targeted - Targeted processes are protected,
+#     minimum - Modification of targeted policy.
+#     mls - Multi Level Security protection.
+SELINUXTYPE=targeted
+
+-bash-4.2$ ls -Z ~/
+unconfined_u:object_r:user_home_t:s0  backups
+unconfined_u:object_r:user_home_t:s0  personal_backup.log
+unconfined_u:object_r:user_home_t:s0  scripts
+unconfined_u:object_r:user_home_t:s0  system_reports.log
+unconfined_u:object_r:user_home_t:s0  cron_monitor.log
+unconfined_u:object_r:user_home_t:s0  env_test.log
+unconfined_u:object_r:user_home_t:s0  cron_debug.log
+
+-bash-4.2$ ps -eZ | head -10
+LABEL                             PID TTY          TIME CMD
+system_u:system_r:init_t:s0         1 ?        00:00:01 systemd
+system_u:system_r:kernel_t:s0       2 ?        00:00:00 kthreadd
+system_u:system_r:kernel_t:s0       3 ?        00:00:00 rcu_gp
+system_u:system_r:kernel_t:s0       4 ?        00:00:00 rcu_par_gp
+system_u:system_r:kernel_t:s0       6 ?        00:00:00 kworker/0:0H-events_highpri
+system_u:system_r:systemd_journal_t:s0  318 ?   00:00:00 systemd-journald
+system_u:system_r:sshd_t:s0        681 ?        00:00:00 sshd
+system_u:system_r:crond_t:s0       742 ?        00:00:00 crond
+system_u:system_r:rsyslogd_t:s0    765 ?        00:00:00 rsyslogd
+
+-bash-4.2$ id -Z
+unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023
+
+------------------------------------------------------------
+Installing SELinux Management Tools
+------------------------------------------------------------
+
+-bash-4.2$ sudo dnf install -y policycoreutils-python-utils setools-console
+Installed:
+  policycoreutils-python-utils-3.6-2.el9.noarch
+  setools-console-4.4.4-2.el9.x86_64
+Complete!
+
+-bash-4.2$ which semanage
+/usr/sbin/semanage
+
+-bash-4.2$ semanage --help
+usage: semanage [ -S store ] [ -N ] command [ options ]
+Commands:
+  login
+  user
+  port
+  fcontext
+  boolean
+  permissive
+  module
+  interface
+  node
+  ...
+
+------------------------------------------------------------
+File Context Management
+------------------------------------------------------------
+
+-bash-4.2$ ls -Z /opt/testapp/
+unconfined_u:object_r:default_t:s0  config.conf
+
+-bash-4.2$ sudo restorecon -v /opt/testapp/config.conf
+Relabeled /opt/testapp/config.conf from unconfined_u:object_r:default_t:s0 to unconfined_u:object_r:httpd_config_t:s0
+
+-bash-4.2$ ls -Z /opt/testapp/config.conf
+unconfined_u:object_r:httpd_config_t:s0  /opt/testapp/config.conf
+
+------------------------------------------------------------
+Port Contexts
+------------------------------------------------------------
+
+-bash-4.2$ semanage port -l | grep http
+http_cache_port_t              tcp      8080, 8118, 8123, 10001-10010
+http_port_t                    tcp      80, 443, 488, 8008, 8009, 8443
+http_port_t                    udp      80, 443
+
+-bash-4.2$ sudo semanage port -a -t http_port_t -p tcp 8080
+ValueError: Port tcp/8080 already defined
+
+-bash-4.2$ sudo semanage port -d -p tcp 8080
+-bash-4.2$ sudo semanage port -a -t http_port_t -p tcp 8080
+
+-bash-4.2$ semanage port -l | grep 8080
+http_port_t                    tcp      8080
+
+------------------------------------------------------------
+Booleans
+------------------------------------------------------------
+
+-bash-4.2$ getsebool httpd_can_network_connect
+httpd_can_network_connect --> off
+
+-bash-4.2$ getsebool httpd_can_network_connect
+httpd_can_network_connect --> on
+
+------------------------------------------------------------
+Apache Denial Scenario
+------------------------------------------------------------
+
+-bash-4.2$ curl http://localhost/
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html><head>
+<title>403 Forbidden</title>
+</head><body>
+<h1>Forbidden</h1>
+<p>You don't have permission to access this resource.</p>
+</body></html>
+
+------------------------------------------------------------
+SELinux Denials
+------------------------------------------------------------
+
+-bash-4.2$ sudo ausearch -m avc -ts recent
+----
+time->Sat Feb 24 12:01:22 2026
+type=AVC msg=audit(1708776082.584:104): avc:  denied  { read } for  pid=1923 comm="httpd" name="index.html" scontext=system_u:system_r:httpd_t:s0 tcontext=unconfined_u:object_r:user_home_t:s0 tclass=file permissive=0
+----
+time->Sat Feb 24 12:01:22 2026
+type=AVC msg=audit(1708776082.584:105): avc:  denied  { getattr } for  pid=1923 comm="httpd" path="/home/testuser/website/index.html" scontext=system_u:system_r:httpd_t:s0 tcontext=unconfined_u:object_r:user_home_t:s0 tclass=file permissive=0
+
+------------------------------------------------------------
+After Fixing Context
+------------------------------------------------------------
+
+-bash-4.2$ ls -Z /home/testuser/website/
+unconfined_u:object_r:httpd_sys_content_t:s0  index.html
+
+-bash-4.2$ curl http://localhost/
+<html><body>Test Page</body></html>
+
+------------------------------------------------------------
+SELinux Monitor Script Output
+------------------------------------------------------------
+
+=== SELinux Status ===
+SELinux status:                 enabled
+Current mode:                   enforcing
+Loaded policy name:             targeted
+Max kernel policy version:      33
+
+=== Recent SELinux Denials ===
+type=AVC msg=audit(1708776082.584:104): avc: denied { read }
+
+=== SELinux Boolean Status ===
+27
+Total booleans enabled
+
+=== Custom File Contexts ===
+/home/testuser/website(/.*)?                     all files          system_u:object_r:httpd_sys_content_t:s0
+/opt/testapp/config.conf                         all files          system_u:object_r:httpd_config_t:s0
