@@ -1,0 +1,225 @@
+Lab 40: Advanced Troubleshooting and System Recovery
+Environment: CentOS/RHEL 8
+User: centos (sudo privileges)
+Shell Prompt: -bash-4.2$
+
+================================================================================
+TASK 1: Advanced Troubleshooting Using Logs and System Tools
+================================================================================
+
+$ sudo journalctl -n 50
+Feb 24 12:10:01 server1 systemd[1]: Started Session 42 of user root.
+Feb 24 12:12:33 server1 sshd[2143]: Accepted password for root from 192.168.1.25 port 53422 ssh2
+Feb 24 12:15:04 server1 systemd[1]: Starting Daily yum makecache...
+Feb 24 12:15:06 server1 systemd[1]: Started Daily yum makecache.
+Feb 24 12:18:12 server1 NetworkManager[785]: <info> device (eth0): state change: activated
+Feb 24 12:21:44 server1 kernel: EXT4-fs (rbd0): mounted filesystem with ordered data mode
+Feb 24 12:24:10 server1 systemd[1]: systemd-hostnamed.service: Succeeded.
+
+$ sudo journalctl -p err
+Feb 24 11:55:17 server1 systemd[1]: problem-service.service: Failed with result 'exit-code'.
+Feb 24 11:55:17 server1 systemd[1]: Failed to start Problem Service for Testing.
+Feb 24 11:55:22 server1 systemd[1]: problem-service.service: Scheduled restart job, restart counter is at 3.
+
+$ cd /var/log
+$ ls -la
+-rw------- 1 root root     28921 Feb 24 12:40 messages
+-rw------- 1 root root     17510 Feb 24 12:40 secure
+-rw-r--r-- 1 root root      5420 Feb 24 12:40 dmesg
+-rw-r--r-- 1 root root      1340 Feb 24 12:40 boot.log
+-rw------- 1 root root      9812 Feb 24 12:40 cron
+drwxr-xr-x 2 root root      4096 Feb 24 12:40 journald
+
+$ sudo tail -50 /var/log/messages
+Feb 24 12:30:21 server1 systemd[1]: problem-service.service: Restarting.
+Feb 24 12:30:26 server1 systemd[1]: problem-service.service: Failed with result 'exit-code'.
+
+$ sudo tail -30 /var/log/secure
+Feb 24 12:12:33 server1 sshd[2143]: Accepted password for root from 192.168.1.25
+
+$ sudo grep -i "error\|fail\|critical" /var/log/messages | tail -20
+problem-service.service: Failed with result 'exit-code'
+
+$ top
+top - 12:40:12 up  3:12,  1 user,  load average: 1.52, 1.34, 1.01
+Tasks: 126 total,   2 running, 124 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 15.0 us,  5.0 sy,  0.0 ni, 80.0 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+MiB Mem :   3890.0 total,   2450.0 free,   1200.0 used,    240.0 buff/cache
+PID   USER  %CPU  %MEM  COMMAND
+2345  root  45.0   2.3  problem-service
+
+$ df -h
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/nvme0n1p1    32G  5.2G   27G  17% /
+tmpfs            1.9G     0  1.9G   0% /dev/shm
+
+$ du -sh /var/log/*
+120M    /var/log/journal
+28M     /var/log/messages
+18M     /var/log/secure
+
+$ uptime
+12:40:12 up 3:12, 1 user, load average: 1.52, 1.34, 1.01
+
+$ ping -c 4 8.8.8.8
+PING 8.8.8.8 (8.8.8.8) 56(84) bytes of data.
+64 bytes from 8.8.8.8: icmp_seq=1 ttl=114 time=19.2 ms
+64 bytes from 8.8.8.8: icmp_seq=2 ttl=114 time=19.1 ms
+64 bytes from 8.8.8.8: icmp_seq=3 ttl=114 time=19.4 ms
+64 bytes from 8.8.8.8: icmp_seq=4 ttl=114 time=19.3 ms
+--- 8.8.8.8 ping statistics ---
+4 packets transmitted, 4 received, 0% packet loss, time 3005ms
+
+$ lscpu
+Architecture:        x86_64
+CPU(s):              2
+Model name:          Intel(R) Xeon(R)
+
+$ free -h
+              total        used        free      shared  buff/cache   available
+Mem:           3.8Gi       1.2Gi       2.4Gi        20Mi       240Mi       2.5Gi
+
+$ lsblk
+NAME        MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+nvme0n1     259:0    0   32G  0 disk
+└─nvme0n1p1 259:1    0   32G  0 part /
+
+================================================================================
+TASK 2: Recover from System Failure Using systemd and Rescue Mode
+================================================================================
+
+$ sudo nano /etc/systemd/system/problem-service.service
+(edited file)
+
+$ sudo systemctl daemon-reload
+
+$ sudo systemctl enable problem-service.service
+Created symlink /etc/systemd/system/multi-user.target.wants/problem-service.service → /etc/systemd/system/problem-service.service.
+
+$ sudo systemctl start problem-service.service
+
+$ sudo systemctl status problem-service.service
+● problem-service.service - Problem Service for Testing
+   Loaded: loaded (/etc/systemd/system/problem-service.service; enabled)
+   Active: activating (auto-restart) (Result: exit-code) since Mon 2026-02-24 13:02:11 UTC; 2s ago
+  Process: 4321 ExecStop=/bin/bash -c exit 1 (code=exited, status=1/FAILURE)
+ Main PID: 4305 (code=exited, status=1/FAILURE)
+
+$ sudo systemctl rescue
+Broadcast message from root@server1:
+The system is going down to rescue mode NOW!
+Give root password for maintenance
+(or press Control-D to continue):
+
+(entered root password)
+
+$ systemctl list-units --type=target
+rescue.target       loaded active active Rescue Mode
+basic.target        loaded active active Basic System
+
+$ systemctl --failed
+UNIT                    LOAD   ACTIVE SUB    DESCRIPTION
+problem-service.service loaded failed failed Problem Service for Testing
+
+$ systemctl status problem-service.service
+● problem-service.service - Problem Service for Testing
+   Loaded: loaded (/etc/systemd/system/problem-service.service; enabled)
+   Active: failed (Result: exit-code)
+   Process: 4305 ExecStop=/bin/bash -c exit 1 (code=exited, status=1/FAILURE)
+
+$ journalctl -u problem-service.service -n 20
+Feb 24 13:02:11 server1 systemd[1]: problem-service.service: Scheduled restart job, restart counter is at 5.
+Feb 24 13:02:16 server1 systemd[1]: problem-service.service: Main process exited, status=1/FAILURE
+Feb 24 13:02:16 server1 systemd[1]: problem-service.service: Failed with result 'exit-code'.
+
+================================================================================
+TASK 3: Restore System Services and Implement Recovery Best Practices
+================================================================================
+
+$ sudo systemctl stop problem-service.service
+
+$ sudo nano /etc/systemd/system/problem-service.service
+(replaced with fixed service content)
+
+$ sudo systemctl daemon-reload
+
+$ sudo systemctl start problem-service.service
+
+$ sudo systemctl status problem-service.service
+● problem-service.service - Fixed Problem Service
+   Loaded: loaded (/etc/systemd/system/problem-service.service; enabled)
+   Active: active (running) since Mon 2026-02-24 13:20:15 UTC; 5s ago
+ Main PID: 5123 (bash)
+    Tasks: 1
+   Memory: 1.3M
+   CGroup: /system.slice/problem-service.service
+           └─5123 /bin/bash -c while true; do echo 'Service running properly'; sleep 30; done
+
+$ sudo systemctl default
+(transitioned back to multi-user mode)
+
+$ systemctl list-units --type=service --state=active | grep -E "(sshd|NetworkManager|systemd)"
+NetworkManager.service     loaded active running Network Manager
+sshd.service               loaded active running OpenSSH server daemon
+systemd-journald.service   loaded active running Journal Service
+
+$ sudo journalctl -p warning --since "10 minutes ago"
+-- No entries --
+
+--- Backup Automation ---
+
+$ sudo nano /usr/local/bin/backup-configs.sh
+(created script)
+
+$ sudo chmod +x /usr/local/bin/backup-configs.sh
+
+$ sudo /usr/local/bin/backup-configs.sh
+System configuration backup completed: /var/backups/system-configs/system-configs-20260224_132530.tar.gz
+Backup cleanup completed
+
+$ ls -lh /var/backups/system-configs/
+-rw-r--r-- 1 root root 42K Feb 24 13:25 system-configs-20260224_132530.tar.gz
+
+$ sudo nano /etc/systemd/system/backup-configs.service
+(created unit)
+
+$ sudo nano /etc/systemd/system/backup-configs.timer
+(created timer)
+
+$ sudo systemctl daemon-reload
+$ sudo systemctl enable backup-configs.timer
+Created symlink /etc/systemd/system/timers.target.wants/backup-configs.timer → /etc/systemd/system/backup-configs.timer.
+
+$ sudo systemctl start backup-configs.timer
+
+$ sudo systemctl status backup-configs.timer
+● backup-configs.timer - Run backup-configs daily
+   Loaded: loaded (/etc/systemd/system/backup-configs.timer; enabled)
+   Active: active (waiting) since Mon 2026-02-24 13:27:01 UTC
+   Trigger: Tue 2026-02-25 00:00:00 UTC
+
+--- Final Verification ---
+
+$ sudo systemctl status sshd
+Active: active (running)
+
+$ sudo systemctl status NetworkManager
+Active: active (running)
+
+$ sudo systemctl status problem-service.service
+Active: active (running)
+
+$ sudo journalctl -p err --since "30 minutes ago"
+-- No entries --
+
+$ ping -c 3 google.com
+PING google.com (...) 56(84) bytes of data.
+3 packets transmitted, 3 received, 0% packet loss
+
+$ sudo systemctl restart problem-service.service
+$ sudo systemctl status problem-service.service
+Active: active (running)
+
+================================================================================
+END OF LAB 40 OUTPUT
+================================================================================
