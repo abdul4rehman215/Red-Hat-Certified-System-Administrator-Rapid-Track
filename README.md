@@ -488,6 +488,18 @@ This 40-lab series demonstrates structured progression from foundational system 
 
 ---
 
+# 🚀 How To Use
+
+```bash
+git clone https://github.com/abdul4rehman215/Red-Hat-Certified-System-Administrator-Rapid-Track.git
+cd Red-Hat-Certified-System-Administrator-Rapid-Track
+cd labXX-name
+```
+
+Each lab contains its own `README.md` with setup, execution steps and troubleshooting guidance.
+
+---
+
 ## 🔐 Execution Environment
 
 All labs were executed in controlled RHEL-based Linux environments designed to simulate real enterprise infrastructure operations.
