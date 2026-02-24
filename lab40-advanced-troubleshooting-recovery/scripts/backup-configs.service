@@ -1,0 +1,10 @@
+[Unit]
+Description=System Configuration Backup
+Wants=backup-configs.timer
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/backup-configs.sh
+
+[Install]
+WantedBy=multi-user.target
