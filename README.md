@@ -2,7 +2,7 @@
 
 > Enterprise Linux Administration • Infrastructure Engineering • Security Hardening • Storage Architecture • Automation & Recovery
 
-A complete **40-lab hands-on Linux system administration engineering portfolio** focused on designing, securing, optimizing, and recovering enterprise RHEL-based infrastructure — from core system access control to distributed storage and automated recovery workflows.
+### A complete **40-lab hands-on Linux system administration engineering portfolio** focused on designing, securing, optimizing, and recovering enterprise RHEL-based infrastructure — from core system access control to distributed storage and automated recovery workflows.
 
 ---
 
